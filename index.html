@@ -630,13 +630,14 @@
                     <div class="email-form">
                         <h3>Get the Free Starter Kit</h3>
                         <p>AI Wins Tracker template + 5 Prompts to Start Your AI Integration</p>
-                        <form id="hero-form" action="#" method="POST">
+                        <form method="post" action="https://sendfox.com/form/1d4w45/m70n7x" class="sendfox-form" data-async="true" data-recaptcha="true">
                             <div class="form-group">
-                                <input type="text" name="name" placeholder="First name" required>
+                                <input type="text" name="first_name" placeholder="First name" required>
                             </div>
                             <div class="form-group">
                                 <input type="email" name="email" placeholder="Email address" required>
                             </div>
+                            <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="a_password" tabindex="-1" value="" autocomplete="off" /></div>
                             <button type="submit" class="btn-primary">Send Me the Starter Kit</button>
                         </form>
                         <p class="form-note">Join 500+ communications leaders. Unsubscribe anytime.</p>
@@ -750,13 +751,14 @@
                 <div class="email-form">
                     <h3>Get Instant Access</h3>
                     <p>Enter your email and get the starter kit delivered immediately.</p>
-                    <form id="magnet-form" action="#" method="POST">
+                    <form method="post" action="https://sendfox.com/form/1d4w45/m70n7x" class="sendfox-form" data-async="true" data-recaptcha="true">
                         <div class="form-group">
-                            <input type="text" name="name" placeholder="First name" required>
+                            <input type="text" name="first_name" placeholder="First name" required>
                         </div>
                         <div class="form-group">
                             <input type="email" name="email" placeholder="Email address" required>
                         </div>
+                        <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="a_password" tabindex="-1" value="" autocomplete="off" /></div>
                         <button type="submit" class="btn-primary">Send Me the Starter Kit</button>
                     </form>
                     <p class="form-note">No spam. Just practical AI integration resources.</p>
@@ -793,13 +795,14 @@
             <p>Get the free starter kit now. The planner ships soon—be ready to hit the ground running.</p>
             
             <div class="email-form">
-                <form id="final-form" action="#" method="POST">
+                <form method="post" action="https://sendfox.com/form/1d4w45/m70n7x" class="sendfox-form" data-async="true" data-recaptcha="true">
                     <div class="form-group">
-                        <input type="text" name="name" placeholder="First name" required>
+                        <input type="text" name="first_name" placeholder="First name" required>
                     </div>
                     <div class="form-group">
                         <input type="email" name="email" placeholder="Email address" required>
                     </div>
+                    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="a_password" tabindex="-1" value="" autocomplete="off" /></div>
                     <button type="submit" class="btn-primary">Send Me the Starter Kit</button>
                 </form>
                 <p class="form-note">Join communications leaders already preparing for AI integration.</p>
@@ -814,30 +817,14 @@
         </div>
     </footer>
     
+    <!-- SendFox Script -->
+    <script src="https://cdn.sendfox.com/js/form.js" charset="utf-8"></script>
     <script>
-        // Form handling - replace with GHL webhook when ready
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const data = {
-                    name: formData.get('name'),
-                    email: formData.get('email')
-                };
-                
-                // TODO: Replace with GHL webhook URL
-                // fetch('YOUR_GHL_WEBHOOK_URL', {
-                //     method: 'POST',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(data)
-                // }).then(response => {
-                //     window.location.href = '/thank-you.html';
-                // });
-                
-                // Temporary: just show alert
-                alert('Thanks ' + data.name + '! In production, this will submit to GHL and redirect to a thank you page with download links.');
-            });
+        // Redirect to thank-you page after successful SendFox submission
+        window.addEventListener('message', function(e) {
+            if (e.data === 'sendfox_success') {
+                window.location.href = '/thank-you';
+            }
         });
     </script>
 </body>
