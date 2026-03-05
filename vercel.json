@@ -6,6 +6,14 @@
       "dest": "/scorecard/index.html"
     },
     {
+      "src": "/scorecard/thank-you",
+      "dest": "/scorecard/thank-you.html"
+    },
+    {
+      "src": "/scorecard/assessment",
+      "dest": "/scorecard/assessment.html"
+    },
+    {
       "src": "/scorecard/(.*)",
       "dest": "/scorecard/$1"
     },
