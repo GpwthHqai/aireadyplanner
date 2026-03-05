@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The AI-Ready Comms Team Scorecard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0A1628;
+            --blue: #D4AF55;
+            --coral: #D4AF55;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6B7280;
+            --border: #e9ecef;
+        }
+
+        html, body {
+            min-height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: var(--light-gray);
+            color: var(--navy);
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100%;
+            height: auto;
+        }
+
+        body.showing-results {
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(26, 26, 46, 0.12);
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #0A1628 0%, #122037 100%);
+            padding: 40px 40px 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 85, 0.1) 0%, transparent 70%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .byline {
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* CONTENT AREA */
+        .content {
+            min-height: 500px;
+            padding: 60px 40px;
+        }
+
+        /* WELCOME SCREEN */
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-screen {
+            text-align: center;
+        }
+
+        .welcome-screen h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 44px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #D4AF55 0%, #0A1628 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-screen p {
+            font-size: 18px;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .welcome-benefits {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 40px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .benefit {
+            padding: 20px;
+            background: var(--light-gray);
+            border-radius: 12px;
+            font-size: 14px;
+            text-align: left;
+            border-left: 4px solid #D4AF55;
+        }
+
+        .benefit strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--navy);
+        }
+
+        /* BUTTONS */
+        button {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: #D4AF55;
+            color: #0A1628;
+            margin-top: 30px;
+            padding: 16px 48px;
+            font-size: 17px;
+            box-shadow: 0 10px 30px rgba(212, 175, 85, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #E8CC7A;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(212, 175, 85, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--navy);
+            border: 2px solid var(--border);
+            margin-right: 10px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        /* PROGRESS BAR */
+        .progress-section {
+            margin-bottom: 40px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D4AF55 0%, #E8CC7A 100%);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* ASSESSMENT SCREEN */
+        .assessment-screen {
+            max-width: 700px;
+        }
+
+        .category-header {
+            margin-bottom: 30px;
+        }
+
+        .category-name {
+            font-family: 'Fraunces', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .category-description {
+            font-size: 15px;
+            color: var(--dark-gray);
+        }
+
+        .question-container {
+            margin-bottom: 40px;
+        }
+
+        .question-number {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .scale-options {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .scale-option {
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .scale-option:hover {
+            border-color: var(--blue);
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .scale-option.selected {
+            border-color: #D4AF55;
+            background: linear-gradient(135deg, rgba(212, 175, 85, 0.1) 0%, rgba(212, 175, 85, 0.05) 100%);
+            box-shadow: 0 4px 12px rgba(212, 175, 85, 0.15);
+        }
+
+        .scale-number {
+            display: block;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+
+        .scale-label {
+            display: block;
+            font-size: 11px;
+            color: var(--dark-gray);
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .assessment-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 50px;
+            justify-content: space-between;
+        }
+
+        .assessment-buttons button {
+            flex: 1;
+        }
+
+        /* RESULTS SCREEN */
+        .results-screen {
+            max-width: 1000px;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .results-header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: var(--navy);
+        }
+
+        .results-header p {
+            font-size: 16px;
+            color: var(--dark-gray);
+        }
+
+        /* SCORE GAUGE */
+        .gauge-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+        }
+
+        .gauge {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .gauge-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .gauge-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .gauge-score {
+            font-family: 'Fraunces', serif;
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--navy);
+            line-height: 1;
+        }
+
+        .gauge-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+
+        .gauge-maturity {
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 12px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .maturity-exploring {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .maturity-developing {
+            background: #fecaca;
+            color: #7f1d1d;
+        }
+
+        .maturity-advancing {
+            background: #93c5fd;
+            color: #1e40af;
+        }
+
+        .maturity-leading {
+            background: #a7f3d0;
+            color: #065f46;
+        }
+
+        .maturity-pioneering {
+            background: #c7d2fe;
+            color: #312e81;
+        }
+
+        /* RADAR CHART */
+        .radar-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+            padding: 30px;
+            background: var(--light-gray);
+            border-radius: 12px;
+        }
+
+        .radar {
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+        }
+
+        /* DIMENSIONS GRID */
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .dimension-card {
+            padding: 30px;
+            background: var(--light-gray);
+            border-radius: 12px;
+            border-left: 6px solid #D4AF55;
+            transition: all 0.3s ease;
+        }
+
+        .dimension-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(212, 175, 85, 0.1);
+        }
+
+        .dimension-card.critical {
+            border-left-color: #D4AF55;
+            background: rgba(212, 175, 85, 0.05);
+        }
+
+        .dimension-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .dimension-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .dimension-score {
+            font-family: 'Fraunces', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--blue);
+        }
+
+        .dimension-maturity {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+        }
+
+        .dimension-assessment {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+            line-height: 1.6;
+            min-height: 60px;
+        }
+
+        .recommendations {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .recommendation {
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #D4AF55;
+            font-size: 13px;
+            color: var(--navy);
+            line-height: 1.5;
+        }
+
+        .recommendation strong {
+            color: var(--blue);
+        }
+
+        /* PRIORITY ACTIONS */
+        .priority-section {
+            background: linear-gradient(135deg, rgba(67, 97, 238, 0.08) 0%, rgba(255, 107, 107, 0.05) 100%);
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 50px;
+            border: 2px solid rgba(212, 175, 85, 0.1);
+        }
+
+        .priority-title {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 25px;
+        }
+
+        .priority-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .priority-action {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            border-top: 4px solid var(--coral);
+        }
+
+        .action-number {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--coral);
+            margin-bottom: 8px;
+        }
+
+        .action-dimension {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .action-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--navy);
+            line-height: 1.5;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            background: linear-gradient(135deg, #0A1628 0%, #122037 100%);
+            padding: 50px 40px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 50px;
+        }
+
+        .cta-section h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, var(--coral) 0%, #ff5252 100%);
+            color: white;
+            padding: 16px 48px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(212, 175, 85, 0.3);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(212, 175, 85, 0.4);
+        }
+
+        /* FOOTER ACTIONS */
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--navy);
+            border: 2px solid var(--border);
+            padding: 14px 28px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .content {
+                padding: 40px 20px;
+            }
+
+            .header {
+                padding: 30px 20px 20px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .welcome-screen h1 {
+                font-size: 32px;
+            }
+
+            .category-name {
+                font-size: 24px;
+            }
+
+            .scale-options {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+
+            .scale-label {
+                font-size: 10px;
+            }
+
+            .results-header h1 {
+                font-size: 28px;
+            }
+
+            .gauge {
+                width: 220px;
+                height: 220px;
+            }
+
+            .gauge-score {
+                font-size: 52px;
+            }
+
+            .dimensions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .priority-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section h3 {
+                font-size: 22px;
+            }
+
+            .assessment-buttons {
+                flex-direction: column-reverse;
+            }
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                border-radius: 0;
+            }
+
+            .header {
+                padding: 20px 40px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 40px;
+            }
+
+            .footer-actions {
+                display: none;
+            }
+
+            .cta-section {
+                page-break-before: avoid;
+            }
+
+            .dimension-card {
+                page-break-inside: avoid;
+            }
+
+            .results-header {
+                margin-bottom: 30px;
+            }
+
+            .gauge-container {
+                margin-bottom: 30px;
+            }
+
+            .radar-container {
+                page-break-inside: avoid;
+                margin-bottom: 30px;
+            }
+        }
+
+        /* LOADING ANIMATION */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .loading {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">AI-Ready Comms Team Scorecard</div>
+                <div class="byline">By Vernon Ross</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- WELCOME SCREEN -->
+            <div class="screen welcome-screen active" id="welcome">
+                <h1>Assess Your Team's AI Readiness</h1>
+                <p>Discover where your communications team stands on the path to AI mastery. Get personalized insights and actionable recommendations to accelerate your AI adoption.</p>
+
+                <div class="welcome-benefits">
+                    <div class="benefit">
+                        <strong>20 Expert Questions</strong>
+                        Covering all critical dimensions of AI readiness
+                    </div>
+                    <div class="benefit">
+                        <strong>Detailed Analysis</strong>
+                        Understand your strengths and opportunities
+                    </div>
+                    <div class="benefit">
+                        <strong>Actionable Roadmap</strong>
+                        Specific next steps tailored to your situation
+                    </div>
+                    <div class="benefit">
+                        <strong>5-Minute Assessment</strong>
+                        Quick, focused, and deeply insightful
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="startAssessment()">Start Assessment</button>
+            </div>
+
+            <!-- ASSESSMENT SCREEN -->
+            <div class="screen assessment-screen" id="assessment">
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span id="progressLabel">AI Strategy & Vision</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <div class="category-header">
+                    <div class="category-name" id="categoryName">AI Strategy & Vision</div>
+                    <div class="category-description" id="categoryDesc">Understanding leadership alignment and resource allocation</div>
+                </div>
+
+                <div id="questionsContainer"></div>
+
+                <div class="assessment-buttons">
+                    <button class="btn-secondary" onclick="previousQuestion()">Previous</button>
+                    <button class="btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+                </div>
+            </div>
+
+            <!-- RESULTS SCREEN -->
+            <div class="screen" id="results">
+                <div class="results-header">
+                    <h1>Your AI Readiness Results</h1>
+                    <p>A comprehensive analysis of your communications team's AI maturity</p>
+                </div>
+
+                <!-- MAIN SCORE GAUGE -->
+                <div class="gauge-container">
+                    <div class="gauge">
+                        <svg class="gauge-svg" viewBox="0 0 200 200">
+                            <!-- Background circle -->
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="#e9ecef" stroke-width="12"/>
+
+                            <!-- Score arc -->
+                            <circle id="scoreArc" cx="100" cy="100" r="90" fill="none"
+                                    stroke="url(#arcGradient)" stroke-width="12"
+                                    stroke-dasharray="0 565" stroke-linecap="round"
+                                    transform="rotate(-90 100 100)" style="transition: stroke-dasharray 1.5s ease-out;"/>
+
+                            <defs>
+                                <linearGradient id="arcGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#D4AF55;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#E8CC7A;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="gauge-text">
+                            <div class="gauge-score" id="gaugeScore">0</div>
+                            <div class="gauge-label">Overall Score</div>
+                            <div class="gauge-maturity" id="gaugeMaturity">Assessing...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RADAR CHART -->
+                <div class="radar-container">
+                    <svg class="radar" viewBox="0 0 400 400" id="radarChart">
+                        <defs>
+                            <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#D4AF55;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#D4AF55;stop-opacity:0.1" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Background grid -->
+                        <circle cx="200" cy="200" r="30" fill="none" stroke="#e9ecef" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="60" fill="none" stroke="#e9ecef" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="90" fill="none" stroke="#e9ecef" stroke-width="1"/>
+                        <circle cx="200" cy="200" r="120" fill="none" stroke="#e9ecef" stroke-width="1"/>
+
+                        <!-- Axes -->
+                        <line x1="200" y1="200" x2="200" y2="80" stroke="#e9ecef" stroke-width="1"/>
+                        <line x1="200" y1="200" x2="316" y2="137" stroke="#e9ecef" stroke-width="1"/>
+                        <line x1="200" y1="200" x2="295" y2="295" stroke="#e9ecef" stroke-width="1"/>
+                        <line x1="200" y1="200" x2="105" y2="295" stroke="#e9ecef" stroke-width="1"/>
+                        <line x1="200" y1="200" x2="84" y2="137" stroke="#e9ecef" stroke-width="1"/>
+
+                        <!-- Data polygon -->
+                        <polygon id="radarPolygon" points="200,80 200,80 200,80 200,80 200,80"
+                                 fill="url(#radarGradient)" stroke="#D4AF55" stroke-width="2" opacity="0"/>
+
+                        <!-- Dimension labels -->
+                        <text x="200" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a2e">Strategy</text>
+                        <text x="330" y="145" text-anchor="start" font-size="12" font-weight="600" fill="#1a1a2e">Tools</text>
+                        <text x="310" y="320" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a2e">Content</text>
+                        <text x="90" y="320" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a2e">Governance</text>
+                        <text x="70" y="145" text-anchor="end" font-size="12" font-weight="600" fill="#1a1a2e">Skills</text>
+                    </svg>
+                </div>
+
+                <!-- DIMENSION CARDS -->
+                <div class="dimensions-grid" id="dimensionsGrid"></div>
+
+                <!-- PRIORITY ACTIONS -->
+                <div class="priority-section">
+                    <div class="priority-title">Your Priority Actions</div>
+                    <div class="priority-actions" id="priorityActions"></div>
+                </div>
+
+                <!-- CTA SECTION -->
+                <div class="cta-section">
+                    <h3>Want Expert Help Closing These Gaps?</h3>
+                    <p>Work with Vernon Ross to develop a customized AI adoption strategy tailored to your communications team and organizational goals.</p>
+                    <button class="btn-cta" onclick="window.open('https://bookme.name/vernon/lite/ai-comms-scorecard-consultation', '_blank')">Book a Consultation</button>
+                </div>
+
+                <!-- FOOTER ACTIONS -->
+                <div class="footer-actions">
+                    <button class="btn-secondary" onclick="window.print()">Download PDF Report</button>
+                    <button class="btn-secondary" onclick="startAssessment()">Retake Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ASSESSMENT DATA
+        const categories = [
+            {
+                id: 'strategy',
+                name: 'AI Strategy & Vision',
+                description: 'Understanding leadership alignment and resource allocation',
+                questions: [
+                    {
+                        text: 'How clearly has your organization defined the role of AI in communications strategy?',
+                        labels: ['No discussion yet', 'Initial exploration', 'Strategic discussions', 'Well-defined', 'Comprehensive documented strategy']
+                    },
+                    {
+                        text: 'What level of executive sponsorship exists for AI adoption in communications?',
+                        labels: ['None', 'Limited interest', 'Active support', 'Strong backing', 'C-suite champion driving initiatives']
+                    },
+                    {
+                        text: 'How well-defined is your AI implementation roadmap for communications?',
+                        labels: ['No roadmap', 'Initial ideas', 'Developing roadmap', 'Detailed roadmap', 'Detailed 12-month roadmap with milestones']
+                    },
+                    {
+                        text: 'What budget has been allocated specifically for AI tools and training in communications?',
+                        labels: ['No budget', 'Minimal allocation', 'Moderate budget', 'Substantial budget', 'Dedicated budget with annual growth']
+                    }
+                ]
+            },
+            {
+                id: 'tools',
+                name: 'Tools & Technology',
+                description: 'Current AI tool adoption and integration capabilities',
+                questions: [
+                    {
+                        text: 'How many AI-powered tools does your comms team actively use?',
+                        labels: ['None', '1-2 tools', '2-3 tools', '3-4 tools', '5+ integrated tools']
+                    },
+                    {
+                        text: 'How well are your AI tools integrated with existing comms platforms?',
+                        labels: ['Not integrated', 'Minimal integration', 'Partial integration', 'Well integrated', 'Fully integrated into workflows']
+                    },
+                    {
+                        text: 'Do you use AI specifically designed for communications tasks?',
+                        labels: ['Only general tools', 'Mostly general tools', 'Mix of both', 'Mostly specialized', 'Purpose-built comms AI tools']
+                    },
+                    {
+                        text: 'How effectively does your team use AI for content measurement and analytics?',
+                        labels: ['Not at all', 'Minimal use', 'Some measurement', 'Regular use', 'AI-driven real-time analytics']
+                    }
+                ]
+            },
+            {
+                id: 'skills',
+                name: 'Team Skills & Readiness',
+                description: 'Team capabilities, training, and cultural adoption',
+                questions: [
+                    {
+                        text: 'What percentage of your comms team has received formal AI training?',
+                        labels: ['0%', '1-25%', '25-50%', '50-80%', '80%+']
+                    },
+                    {
+                        text: 'How comfortable is your team with using AI tools in their daily work?',
+                        labels: ['Resistant/fearful', 'Hesitant', 'Neutral', 'Comfortable', 'Enthusiastic power users']
+                    },
+                    {
+                        text: 'Have you identified AI champions or leads within your comms team?',
+                        labels: ['No', 'Informally identified', 'Some designated', 'Designated champions', 'Formal champion program']
+                    },
+                    {
+                        text: 'How often does your team experiment with new AI capabilities?',
+                        labels: ['Never', 'Rarely', 'Occasionally', 'Regularly', 'Weekly experimentation']
+                    }
+                ]
+            },
+            {
+                id: 'content',
+                name: 'Content & Workflow Integration',
+                description: 'AI integration into content creation and distribution processes',
+                questions: [
+                    {
+                        text: 'To what extent is AI integrated into your content creation workflow?',
+                        labels: ['Not at all', 'Minimal use', 'Some stages', 'Most stages', 'Every stage from ideation to distribution']
+                    },
+                    {
+                        text: 'How does your team use AI for audience segmentation and personalization?',
+                        labels: ['Not at all', 'Basic segmentation', 'Some personalization', 'Advanced segmentation', 'AI-driven dynamic personalization']
+                    },
+                    {
+                        text: 'What role does AI play in your editorial calendar and content planning?',
+                        labels: ['None', 'Minimal support', 'Some assistance', 'Significant role', 'AI-powered planning with predictive modeling']
+                    },
+                    {
+                        text: 'How is AI being used to measure and optimize communication effectiveness?',
+                        labels: ['Not at all', 'Basic tracking', 'Some analysis', 'Regular monitoring', 'Real-time AI analytics with automated optimization']
+                    }
+                ]
+            },
+            {
+                id: 'governance',
+                name: 'Governance & Ethics',
+                description: 'Policies, guidelines, and responsible AI practices',
+                questions: [
+                    {
+                        text: 'Does your organization have a formal AI use policy for communications?',
+                        labels: ['No policy', 'Developing policy', 'Basic guidelines', 'Comprehensive policy', 'Comprehensive policy regularly reviewed']
+                    },
+                    {
+                        text: 'How are AI-generated communications reviewed before publication?',
+                        labels: ['No review', 'Informal review', 'Basic review process', 'Multi-stage review', 'Multi-stage with clear disclosure']
+                    },
+                    {
+                        text: 'How well-defined are your brand voice guidelines for AI-generated content?',
+                        labels: ['No guidelines', 'Informal guidelines', 'Basic guidelines', 'Detailed guidelines', 'Detailed guide with examples']
+                    },
+                    {
+                        text: 'How does your team handle data privacy and compliance when using AI tools?',
+                        labels: ['Not considered', 'Minimal consideration', 'Some processes', 'Well-established processes', 'Comprehensive governance with audits']
+                    }
+                ]
+            }
+        ];
+
+        const dimensionDescriptions = {
+            strategy: {
+                exploring: 'Your organization is just beginning to explore AI\'s potential in communications. Start with small pilots and develop a clear vision.',
+                developing: 'You\'ve acknowledged AI\'s importance and have begun planning. Focus on securing executive alignment and budget.',
+                advancing: 'AI is becoming part of your strategic thinking. Accelerate adoption and expand beyond pilots.',
+                leading: 'AI is well-integrated into your communications strategy. Fine-tune execution and measure impact.',
+                pioneering: 'You\'re a leader in AI adoption for communications. Focus on innovation and industry thought leadership.'
+            },
+            tools: {
+                exploring: 'Limited or no AI tools are in use. Research and evaluate communications-specific AI solutions.',
+                developing: 'You\'re using basic AI tools. Evaluate integration opportunities and purpose-built solutions.',
+                advancing: 'Multiple tools are in use but integration could be improved. Consolidate and optimize your tech stack.',
+                leading: 'Your AI tools are well-integrated and purpose-built. Focus on maximizing ROI and scaling.',
+                pioneering: 'Your tool ecosystem is sophisticated and fully integrated. Share best practices and explore new frontiers.'
+            },
+            skills: {
+                exploring: 'Team lacks AI experience and comfort. Invest in foundational training immediately.',
+                developing: 'Some team members have basic AI familiarity. Expand training and identify champions.',
+                advancing: 'Most of your team is comfortable with AI. Deepen expertise and scale best practices.',
+                leading: 'Your team has strong AI skills. Focus on advanced techniques and continuous learning.',
+                pioneering: 'Your team is highly skilled and experimental. Foster innovation and thought leadership.'
+            },
+            content: {
+                exploring: 'AI is barely integrated into content workflows. Start with high-impact use cases.',
+                developing: 'Some AI integration exists. Identify opportunities to expand into more workflow stages.',
+                advancing: 'AI assists with multiple workflow stages. Look for gaps and optimization opportunities.',
+                leading: 'AI is well-integrated across content workflows. Focus on personalization and optimization.',
+                pioneering: 'Your content workflows are AI-native. Explore predictive and generative capabilities at scale.'
+            },
+            governance: {
+                exploring: 'Governance framework is lacking. Develop AI use policies and review processes.',
+                developing: 'Basic guidelines exist. Formalize policies and establish clear review procedures.',
+                advancing: 'Solid governance is in place. Strengthen oversight and ensure consistent application.',
+                leading: 'Strong governance and ethical practices are established. Maintain compliance and share knowledge.',
+                pioneering: 'You\'re setting industry standards for responsible AI use. Continue leadership in ethics and compliance.'
+            }
+        };
+
+        const recommendations = {
+            strategy: {
+                0: ['Schedule executive workshops to define AI vision', 'Identify key AI use cases for communications', 'Research AI tools and solutions relevant to your industry'],
+                1: ['Present ROI case studies to secure executive support', 'Develop initial 6-month pilot roadmap', 'Allocate pilot project budget and resources'],
+                2: ['Create detailed 12-month AI implementation roadmap', 'Establish AI steering committee or taskforce', 'Set measurable adoption and impact goals'],
+                3: ['Execute roadmap with regular progress tracking', 'Expand AI initiatives beyond pilots', 'Integrate AI into annual communications planning'],
+                4: ['Scale successful AI initiatives across organization', 'Invest in advanced AI capabilities', 'Build AI thought leadership and share best practices']
+            },
+            tools: {
+                0: ['Conduct landscape analysis of comms-specific AI tools', 'Run trials with 2-3 leading tools', 'Develop evaluation criteria for selection'],
+                1: ['Select primary AI tools for core workflows', 'Plan integration with existing platforms', 'Establish tool management and training process'],
+                2: ['Expand to specialized tools for advanced use cases', 'Implement integration layer for better connectivity', 'Measure tool adoption and productivity impact'],
+                3: ['Consolidate tools and eliminate redundancy', 'Optimize integrations and data flows', 'Train team on advanced features and capabilities'],
+                4: ['Explore emerging AI technologies and tools', 'Build custom integrations or workflows', 'Continuously evaluate and upgrade your stack']
+            },
+            skills: {
+                0: ['Launch comprehensive AI fundamentals training', 'Create AI learning resources and documentation', 'Start with early adopters as change agents'],
+                1: ['Expand training to entire team', 'Identify and develop AI champions', 'Create AI skill development program'],
+                2: ['Offer advanced training for specific roles', 'Scale champion program and mentoring', 'Build internal AI expertise and knowledge base'],
+                3: ['Develop mastery-level training and certifications', 'Create peer learning and practice groups', 'Share knowledge across organization'],
+                4: ['Lead industry training and thought leadership', 'Recruit and retain AI talent', 'Foster culture of continuous learning']
+            },
+            content: {
+                0: ['Identify 3-5 high-impact AI use cases', 'Start with AI-assisted ideation and drafting', 'Pilot personalization with one audience segment'],
+                1: ['Expand AI use to more content types', 'Implement AI analytics for content performance', 'Automate routine content tasks with AI'],
+                2: ['Integrate AI into editorial planning and scheduling', 'Scale personalization across channels', 'Use AI for real-time content optimization'],
+                3: ['Implement predictive content modeling', 'Automate audience segmentation and messaging', 'Build AI-powered A/B testing frameworks'],
+                4: ['Deploy generative AI for at-scale content creation', 'Build AI-first content operating model', 'Pioneer new content formats and experiences']
+            },
+            governance: {
+                0: ['Define AI use guidelines and boundaries', 'Establish review and approval process', 'Develop AI brand voice guidelines'],
+                1: ['Formalize AI policy and governance framework', 'Implement review workflows and checklists', 'Create AI content disclosure standards'],
+                2: ['Strengthen review processes and oversight', 'Build compliance checks into workflows', 'Document lessons learned and best practices'],
+                3: ['Implement automated compliance checking', 'Conduct regular AI governance audits', 'Enhance data privacy and security measures'],
+                4: ['Lead industry standards for responsible AI', 'Publish thought leadership on AI governance', 'Participate in AI ethics and policy discussions']
+            }
+        };
+
+        // STATE MANAGEMENT
+        let currentCategoryIndex = 0;
+        let currentQuestionIndex = 0;
+        let scores = {};
+
+        // INITIALIZE
+        function initAssessment() {
+            scores = {};
+            categories.forEach(cat => {
+                scores[cat.id] = new Array(cat.questions.length).fill(null);
+            });
+        }
+
+        function startAssessment() {
+            initAssessment();
+            currentCategoryIndex = 0;
+            currentQuestionIndex = 0;
+            showScreen('assessment');
+            renderQuestion();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            if (screenId === 'results') {
+                setTimeout(() => animateResults(), 100);
+            }
+        }
+
+        function renderQuestion() {
+            const category = categories[currentCategoryIndex];
+            const question = category.questions[currentQuestionIndex];
+
+            document.getElementById('categoryName').textContent = category.name;
+            document.getElementById('categoryDesc').textContent = category.description;
+
+            const totalQuestions = categories.reduce((sum, cat) => sum + cat.questions.length, 0);
+            const currentQuestion = categories.slice(0, currentCategoryIndex).reduce((sum, cat) => sum + cat.questions.length, 0) + currentQuestionIndex + 1;
+            const progress = (currentQuestion / totalQuestions) * 100;
+
+            document.getElementById('progressLabel').textContent = category.name;
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            let html = `
+                <div class="question-container">
+                    <div class="question-number">Question ${currentQuestion} of ${totalQuestions}</div>
+                    <div class="question-text">${question.text}</div>
+                    <div class="scale-options">
+            `;
+
+            question.labels.forEach((label, idx) => {
+                const value = idx + 1;
+                const isSelected = scores[category.id][currentQuestionIndex] === value;
+                html += `
+                    <div class="scale-option ${isSelected ? 'selected' : ''}" onclick="selectAnswer(${value})">
+                        <span class="scale-number">${value}</span>
+                        <span class="scale-label">${label}</span>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            document.getElementById('questionsContainer').innerHTML = html;
+
+            // Update button states
+            document.querySelector('.btn-secondary').disabled = currentCategoryIndex === 0 && currentQuestionIndex === 0;
+            const isLastQuestion = currentCategoryIndex === categories.length - 1 && currentQuestionIndex === categories[currentCategoryIndex].questions.length - 1;
+            document.getElementById('nextBtn').textContent = isLastQuestion ? 'View Results' : 'Next';
+        }
+
+        function selectAnswer(value) {
+            const category = categories[currentCategoryIndex];
+            scores[category.id][currentQuestionIndex] = value;
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            const category = categories[currentCategoryIndex];
+            const isAnswered = scores[category.id][currentQuestionIndex] !== null;
+
+            if (!isAnswered) {
+                alert('Please select an answer before continuing');
+                return;
+            }
+
+            if (currentQuestionIndex < category.questions.length - 1) {
+                currentQuestionIndex++;
+            } else if (currentCategoryIndex < categories.length - 1) {
+                currentCategoryIndex++;
+                currentQuestionIndex = 0;
+            } else {
+                showResults();
+                return;
+            }
+
+            renderQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+            } else if (currentCategoryIndex > 0) {
+                currentCategoryIndex--;
+                currentQuestionIndex = categories[currentCategoryIndex].questions.length - 1;
+            }
+            renderQuestion();
+        }
+
+        // RESULTS CALCULATION
+        function calculateScores() {
+            const dimensionScores = {};
+
+            categories.forEach((category, catIdx) => {
+                const scores_array = scores[category.id];
+                const sum = scores_array.reduce((a, b) => a + b, 0);
+                const max = scores_array.length * 5;
+                dimensionScores[category.id] = Math.round((sum / max) * 100);
+            });
+
+            const overallScore = Math.round(Object.values(dimensionScores).reduce((a, b) => a + b, 0) / 5);
+
+            return { overall: overallScore, dimensions: dimensionScores };
+        }
+
+        function getMaturityLevel(score) {
+            if (score <= 30) return 'Exploring';
+            if (score <= 50) return 'Developing';
+            if (score <= 70) return 'Advancing';
+            if (score <= 85) return 'Leading';
+            return 'Pioneering';
+        }
+
+        function getMaturityClass(score) {
+            if (score <= 30) return 'maturity-exploring';
+            if (score <= 50) return 'maturity-developing';
+            if (score <= 70) return 'maturity-advancing';
+            if (score <= 85) return 'maturity-leading';
+            return 'maturity-pioneering';
+        }
+
+        function showResults() {
+            document.body.classList.add('showing-results');
+            showScreen('results');
+            window.scrollTo(0, 0);
+        }
+
+        function animateResults() {
+            const { overall, dimensions } = calculateScores();
+
+            // Animate overall score gauge
+            animateGauge(overall);
+
+            // Animate radar chart
+            animateRadar(dimensions);
+
+            // Render dimension cards
+            renderDimensionCards(dimensions);
+
+            // Render priority actions
+            renderPriorityActions(dimensions);
+        }
+
+        function animateGauge(score) {
+            const scoreEl = document.getElementById('gaugeScore');
+            const maturityEl = document.getElementById('gaugeMaturity');
+            const arc = document.getElementById('scoreArc');
+
+            // Animate score counter
+            animateCounter(scoreEl, score, 1500);
+
+            // Animate arc
+            setTimeout(() => {
+                const circumference = 2 * Math.PI * 90;
+                const offset = circumference - (score / 100) * circumference;
+                arc.style.strokeDasharray = `${circumference - offset} ${circumference}`;
+                arc.style.opacity = '1';
+            }, 100);
+
+            // Update maturity level after animation
+            setTimeout(() => {
+                const level = getMaturityLevel(score);
+                maturityEl.textContent = level;
+                maturityEl.className = 'gauge-maturity ' + getMaturityClass(score);
+            }, 1500);
+        }
+
+        function animateCounter(el, target, duration) {
+            const start = 0;
+            const startTime = Date.now();
+
+            const update = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const value = Math.floor(start + (target - start) * progress);
+                el.textContent = value;
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            };
+
+            update();
+        }
+
+        function animateRadar(dimensions) {
+            const categoryOrder = ['strategy', 'tools', 'skills', 'governance', 'content'];
+            const values = categoryOrder.map(id => dimensions[id]);
+
+            // Convert scores to polygon points
+            const centerX = 200;
+            const centerY = 200;
+            const maxRadius = 120;
+            const angleSlice = (Math.PI * 2) / 5;
+
+            let points = [];
+            values.forEach((value, i) => {
+                const angle = angleSlice * i - Math.PI / 2;
+                const radius = (value / 100) * maxRadius;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                points.push(`${x},${y}`);
+            });
+
+            const polygon = document.getElementById('radarPolygon');
+            polygon.setAttribute('points', points.join(' '));
+
+            setTimeout(() => {
+                polygon.style.opacity = '1';
+                polygon.style.transition = 'opacity 1s ease-out';
+            }, 100);
+        }
+
+        function renderDimensionCards(dimensions) {
+            const categoryOrder = ['strategy', 'tools', 'skills', 'content', 'governance'];
+            const sorted = categoryOrder.map(id => ({ id, score: dimensions[id] })).sort((a, b) => a.score - b.score);
+            const critical = sorted[0];
+
+            let html = '';
+            categoryOrder.forEach(dimId => {
+                const category = categories.find(c => c.id === dimId);
+                const score = dimensions[dimId];
+                const level = getMaturityLevel(score);
+                const isCritical = dimId === critical.id;
+
+                const description = dimensionDescriptions[dimId][level.toLowerCase()];
+                const recs = recommendations[dimId][Math.floor(score / 20)];
+
+                html += `
+                    <div class="dimension-card ${isCritical ? 'critical' : ''}">
+                        <div class="dimension-header">
+                            <div class="dimension-name">${category.name}</div>
+                            <div class="dimension-score">${score}</div>
+                        </div>
+                        <div class="dimension-maturity">${level}</div>
+                        <div class="dimension-assessment">${description}</div>
+                        <div class="recommendations">
+                            ${recs.map(rec => `<div class="recommendation"><strong>→</strong> ${rec}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('dimensionsGrid').innerHTML = html;
+        }
+
+        function renderPriorityActions(dimensions) {
+            const categoryOrder = ['strategy', 'tools', 'skills', 'content', 'governance'];
+            const sorted = categoryOrder.map(id => ({ id, name: categories.find(c => c.id === id).name, score: dimensions[id] })).sort((a, b) => a.score - b.score);
+
+            const topThree = sorted.slice(0, 3);
+
+            let html = '';
+            topThree.forEach((item, idx) => {
+                const recs = recommendations[item.id][Math.floor(item.score / 20)];
+                const topRec = recs[0];
+                html += `
+                    <div class="priority-action">
+                        <div class="action-number">${idx + 1}</div>
+                        <div class="action-dimension">${item.name}</div>
+                        <div class="action-text">${topRec}</div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('priorityActions').innerHTML = html;
+        }
+
+        // Initialize on load
+        initAssessment();
+    </script>
+</body>
+</html>

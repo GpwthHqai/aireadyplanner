@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed | AI-Ready Comms Team Scorecard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0A1628;
+            --blue: #D4AF55;
+            --coral: #D4AF55;
+            --light-gray: #f8f9fa;
+            --dark-gray: #6B7280;
+            --border: #e9ecef;
+        }
+
+        html, body {
+            min-height: 100%;
+            font-family: 'Inter', sans-serif;
+            background: var(--light-gray);
+            color: var(--navy);
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+            animation: fadeInPage 0.6s ease-out;
+        }
+
+        @keyframes fadeInPage {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(26, 26, 46, 0.12);
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #0A1628 0%, #122037 100%);
+            padding: 40px 40px 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 85, 0.1) 0%, transparent 70%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .byline {
+            font-size: 13px;
+            opacity: 0.9;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* CONTENT AREA */
+        .content {
+            padding: 60px 40px;
+        }
+
+        /* MAIN CENTERED CONTENT */
+        .main-content {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ANIMATED CHECKMARK */
+        .checkmark-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            animation: slideUp 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .checkmark {
+            width: 80px;
+            height: 80px;
+        }
+
+        .checkmark-circle {
+            stroke: #D4AF55;
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            animation: drawCircle 0.6s ease-out 0.4s both;
+        }
+
+        .checkmark-path {
+            stroke: #D4AF55;
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            animation: drawCheck 0.5s ease-out 0.8s both;
+        }
+
+        @keyframes drawCircle {
+            from {
+                stroke-dasharray: 251;
+                stroke-dashoffset: 251;
+            }
+            to {
+                stroke-dasharray: 251;
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes drawCheck {
+            from {
+                stroke-dasharray: 60;
+                stroke-dashoffset: 60;
+            }
+            to {
+                stroke-dasharray: 60;
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* HEADLINES */
+        .headline {
+            font-family: 'Fraunces', serif;
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--navy);
+            margin-bottom: 16px;
+            line-height: 1.2;
+            animation: slideUp 0.6s ease-out 0.4s both;
+        }
+
+        .subheadline {
+            font-size: 20px;
+            color: var(--dark-gray);
+            margin-bottom: 50px;
+            line-height: 1.6;
+            animation: slideUp 0.6s ease-out 0.6s both;
+        }
+
+        /* SECTIONS WITH STAGGERED ANIMATION */
+        .section {
+            animation: slideUp 0.6s ease-out both;
+        }
+
+        .section:nth-child(1) { animation-delay: 0.8s; }
+        .section:nth-child(2) { animation-delay: 1s; }
+        .section:nth-child(3) { animation-delay: 1.2s; }
+
+        .section-title {
+            font-family: 'Fraunces', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        /* EXPECTATIONS SECTION */
+        .expectations-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 28px;
+            margin-bottom: 50px;
+        }
+
+        .expectation-card {
+            text-align: left;
+            padding: 0;
+            border: none;
+            background: transparent;
+        }
+
+        .expectation-icon {
+            font-size: 28px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .expectation-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 12px;
+        }
+
+        .expectation-text {
+            font-size: 16px;
+            color: var(--dark-gray);
+            line-height: 1.6;
+            padding-left: 0;
+        }
+
+        /* PROMPTS SECTION */
+        .prompts-container {
+            text-align: left;
+            margin-bottom: 50px;
+        }
+
+        .prompts-intro {
+            font-size: 16px;
+            color: var(--dark-gray);
+            margin-bottom: 32px;
+        }
+
+        .prompt-card {
+            background: linear-gradient(135deg, rgba(212, 175, 85, 0.05) 0%, rgba(212, 175, 85, 0.03) 100%);
+            border-left: 4px solid #D4AF55;
+            padding: 24px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            color: var(--navy);
+            line-height: 1.7;
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            background: rgba(212, 175, 85, 0.05);
+            padding: 40px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .cta-question {
+            font-size: 18px;
+            color: var(--navy);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        button {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: #D4AF55;
+            color: #0A1628;
+            padding: 16px 48px;
+            font-size: 17px;
+            box-shadow: 0 10px 30px rgba(212, 175, 85, 0.3);
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary:hover {
+            background: #E8CC7A;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(212, 175, 85, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .cta-subtext {
+            font-size: 14px;
+            color: var(--dark-gray);
+            font-weight: 500;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .content {
+                padding: 40px 24px;
+            }
+
+            .headline {
+                font-size: 36px;
+            }
+
+            .subheadline {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .expectations-grid {
+                gap: 24px;
+            }
+
+            .prompt-card {
+                padding: 20px;
+            }
+
+            .cta-section {
+                padding: 30px 24px;
+            }
+
+            .expectation-icon {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 30px 20px 25px;
+            }
+
+            .logo {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 30px 16px;
+            }
+
+            .headline {
+                font-size: 32px;
+            }
+
+            .subheadline {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .btn-primary {
+                width: 100%;
+            }
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                box-shadow: none;
+                border: 1px solid var(--border);
+            }
+
+            .header::before {
+                display: none;
+            }
+
+            button {
+                display: none;
+            }
+
+            .cta-section {
+                background: white;
+                border: 1px solid var(--border);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">AI-Ready Comms Team Scorecard</div>
+                <div class="byline">By Vernon Ross</div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+            <div class="main-content">
+                <!-- Animated Checkmark -->
+                <div class="checkmark-container">
+                    <svg class="checkmark" viewBox="0 0 80 80">
+                        <circle class="checkmark-circle" cx="40" cy="40" r="39"></circle>
+                        <polyline class="checkmark-path" points="24,42 35,53 56,30"></polyline>
+                    </svg>
+                </div>
+
+                <!-- Headlines -->
+                <h1 class="headline">You're Booked.</h1>
+                <p class="subheadline">Your AI Comms Scorecard Consultation is confirmed.</p>
+
+                <!-- WHAT TO EXPECT SECTION -->
+                <div class="section">
+                    <h2 class="section-title">What to Expect</h2>
+                    <div class="expectations-grid">
+                        <div class="expectation-card">
+                            <span class="expectation-icon">📧</span>
+                            <div class="expectation-title">Check your inbox</div>
+                            <p class="expectation-text">You'll receive a calendar invite with your meeting details and Zoom link shortly.</p>
+                        </div>
+                        <div class="expectation-card">
+                            <span class="expectation-icon">📊</span>
+                            <div class="expectation-title">Have your Scorecard results ready</div>
+                            <p class="expectation-text">We'll use your assessment as our starting point to identify your team's biggest opportunities.</p>
+                        </div>
+                        <div class="expectation-card">
+                            <span class="expectation-icon">💬</span>
+                            <div class="expectation-title">Come with questions</div>
+                            <p class="expectation-text">This is your time. Whether it's about tools, team readiness, or strategy — bring it.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WHILE YOU WAIT SECTION -->
+                <div class="section">
+                    <h2 class="section-title">While You Wait</h2>
+                    <p class="prompts-intro">Here are a few things to think about before we meet:</p>
+                    <div class="prompts-container">
+                        <div class="prompt-card">What's the one AI capability that would make the biggest difference for your comms team right now?</div>
+                        <div class="prompt-card">What's the biggest barrier your team faces in adopting AI tools?</div>
+                        <div class="prompt-card">If you could automate one part of your communications workflow, what would it be?</div>
+                    </div>
+                </div>
+
+                <!-- CTA SECTION -->
+                <div class="section">
+                    <div class="cta-section">
+                        <p class="cta-question">Haven't taken the Scorecard yet?</p>
+                        <a href="/scorecard/"><button class="btn-primary">Take the Assessment</button></a>
+                        <p class="cta-subtext">Share this with a colleague who should take it too.</p>
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <footer class="footer">
+                    © 2026 Vernon Ross. All rights reserved.
+                </footer>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

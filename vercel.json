@@ -2,6 +2,14 @@
   "version": 2,
   "routes": [
     {
+      "src": "/scorecard",
+      "dest": "/scorecard/index.html"
+    },
+    {
+      "src": "/scorecard/(.*)",
+      "dest": "/scorecard/$1"
+    },
+    {
       "src": "/thank-you",
       "dest": "/thank-you.html"
     },

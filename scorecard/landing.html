@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Ready Comms Team Scorecard | Vernon Ross</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1a1a2e;
+            background: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2.5rem, 8vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: #1a1a2e;
+        }
+
+        h2 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: #1a1a2e;
+        }
+
+        h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #1a1a2e;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #4a4a6a;
+            margin-bottom: 1rem;
+        }
+
+        .lead {
+            font-size: 1.125rem;
+            color: #4a4a6a;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: #D4AF55;
+            color: #0A1628;
+            box-shadow: 0 10px 30px rgba(212, 175, 85, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #E8CC7A;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 85, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        /* Container & Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 6rem 0;
+        }
+
+        section.dark {
+            background: #f8f9fc;
+        }
+
+        /* Navigation / Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 2rem;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(212, 175, 85, 0.1);
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #D4AF55;
+            text-decoration: none;
+        }
+
+        nav a {
+            color: #4a4a6a;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #D4AF55;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+            background: linear-gradient(135deg, rgba(212, 175, 85, 0.05) 0%, rgba(212, 175, 85, 0.03) 100%);
+        }
+
+        .hero-content {
+            max-width: 700px;
+        }
+
+        .hero h1 {
+            color: #1a1a2e;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero .lead {
+            color: #4a4a6a;
+            margin-bottom: 2.5rem;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        /* Fade-in animation */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Problem Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            border-left: 4px solid #D4AF55;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h4 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #D4AF55;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #4a4a6a;
+            font-size: 0.95rem;
+        }
+
+        /* Solution Section */
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .dimension-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(212, 175, 85, 0.1);
+        }
+
+        .dimension-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(212, 175, 85, 0.15);
+            border-color: #D4AF55;
+        }
+
+        .dimension-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, #D4AF55 0%, #E8CC7A 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0A1628;
+            font-size: 1.8rem;
+        }
+
+        .dimension-card h3 {
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+        }
+
+        .dimension-card p {
+            color: #4a4a6a;
+            font-size: 0.95rem;
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .feature-check {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            background: linear-gradient(135deg, #D4AF55 0%, #E8CC7A 100%);
+            border-radius: 50%;
+            color: #0A1628;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        .feature-text h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-text p {
+            font-size: 0.9rem;
+            color: #4a4a6a;
+            margin: 0;
+        }
+
+        /* Personas Section */
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .persona-card {
+            background: linear-gradient(135deg, #D4AF55 0%, #E8CC7A 100%);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            color: #0A1628;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .persona-card:hover {
+            transform: scale(1.05);
+        }
+
+        .persona-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .persona-card h3 {
+            color: #0A1628;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .persona-card p {
+            color: rgba(10, 22, 40, 0.8);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* About Section */
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h3 {
+            color: #D4AF55;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-accent {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #D4AF55 0%, #E8CC7A 100%);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .about-text p {
+            font-size: 1.05rem;
+            color: #4a4a6a;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Pricing Section */
+        .pricing-card {
+            background: white;
+            border: 2px solid #D4AF55;
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 500px;
+            margin: 3rem auto 0;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(212, 175, 85, 0.1);
+        }
+
+        .price-amount {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #D4AF55;
+            margin: 1.5rem 0;
+        }
+
+        .price-currency {
+            font-size: 1.5rem;
+            vertical-align: super;
+        }
+
+        .price-period {
+            font-size: 1rem;
+            color: #4a4a6a;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features {
+            text-align: left;
+            margin: 2.5rem 0;
+            border-top: 1px solid rgba(212, 175, 85, 0.1);
+            border-bottom: 1px solid rgba(212, 175, 85, 0.1);
+            padding: 2rem 0;
+        }
+
+        .pricing-features li {
+            list-style: none;
+            margin-bottom: 1rem;
+            color: #4a4a6a;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .pricing-features li:before {
+            content: '✓';
+            color: #D4AF55;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .guarantee {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(212, 175, 85, 0.05);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #4a4a6a;
+        }
+
+        /* FAQ Section */
+        .faq-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(212, 175, 85, 0.1);
+            padding-bottom: 2rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-toggle {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #D4AF55;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            color: #4a4a6a;
+            line-height: 1.8;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            margin-top: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #0A1628;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+        }
+
+        footer a {
+            color: #D4AF55;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #E8CC7A;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 4rem 0;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .cta-group .btn {
+                width: 100%;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hero {
+                margin-top: 60px;
+                padding-top: 3rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+
+            .pricing-card {
+                padding: 2rem;
+            }
+        }
+
+        /* Counting animation for stats */
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #D4AF55;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header / Navigation -->
+    <header>
+        <div class="container">
+            <a href="#" class="logo">AI Comms Scorecard</a>
+            <nav>
+                <a href="#solution">How It Works</a>
+                <a href="#features">What You Get</a>
+                <a href="#buy">Pricing</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content fade-in">
+                <h1>Is Your Comms Team Ready for AI — Or About to Get Left Behind?</h1>
+                <p class="lead">The AI-Ready Comms Team Scorecard gives you a clear, data-driven picture of where your team stands — and exactly what to do next.</p>
+                <div class="cta-group">
+                    <a href="#buy" class="btn btn-primary">Get the Scorecard — $37</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="dark">
+        <div class="container fade-in">
+            <h2>AI Is Reshaping Communications. Most Teams Are Flying Blind.</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4><span class="stat-number">45</span>%</h4>
+                    <p>of leaders lack clear guidance on AI use at work</p>
+                </div>
+                <div class="stat-card">
+                    <h4><span class="stat-number">67</span>%</h4>
+                    <p>of organizations cite data quality as their top AI readiness challenge</p>
+                </div>
+                <div class="stat-card">
+                    <h4><span class="stat-number">15</span>%</h4>
+                    <p>of companies say their networks are flexible enough for AI</p>
+                </div>
+                <div class="stat-card">
+                    <h4 style="font-size: 1rem; color: #1a1a2e; font-weight: 600;">The Reality</h4>
+                    <p>Comms teams are being asked to do more with less — and AI is supposed to be the answer. But without a clear picture of where you stand, you're just guessing.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section id="solution">
+        <div class="container fade-in">
+            <h2>20 Questions. 5 Dimensions. Complete Clarity.</h2>
+            <p class="lead">The Scorecard assesses your team across every critical dimension of AI readiness:</p>
+            <div class="dimensions-grid">
+                <div class="dimension-card">
+                    <div class="dimension-icon">📊</div>
+                    <h3>AI Strategy & Vision</h3>
+                    <p>Does your team have a clear roadmap for AI adoption? Are goals aligned across leadership?</p>
+                </div>
+                <div class="dimension-card">
+                    <div class="dimension-icon">⚙️</div>
+                    <h3>Tools & Technology</h3>
+                    <p>What AI platforms and tools does your team use today? How integrated are they into workflow?</p>
+                </div>
+                <div class="dimension-card">
+                    <div class="dimension-icon">👥</div>
+                    <h3>Team Skills & Readiness</h3>
+                    <p>How capable is your team? Do they have the skills, training, and confidence to leverage AI?</p>
+                </div>
+                <div class="dimension-card">
+                    <div class="dimension-icon">📝</div>
+                    <h3>Content & Workflow Integration</h3>
+                    <p>How deeply embedded is AI in your actual day-to-day content creation and distribution?</p>
+                </div>
+                <div class="dimension-card">
+                    <div class="dimension-icon">🛡️</div>
+                    <h3>Governance & Ethics</h3>
+                    <p>Do you have policies in place? Is your team confident about responsible, compliant AI use?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="dark" id="features">
+        <div class="container fade-in">
+            <h2>Your Complete AI Readiness Picture</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>Interactive Assessment</h4>
+                        <p>20 targeted questions tailored to corporate comms teams</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>AI Readiness Score</h4>
+                        <p>0-100 score with animated visual dashboard</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>Radar Chart</h4>
+                        <p>Visual map of your strengths and gaps across 5 dimensions</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>Maturity Levels</h4>
+                        <p>Classification from Exploring to Pioneering</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>Tailored Recommendations</h4>
+                        <p>Dimension-by-dimension analysis with specific next steps</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>Priority Actions</h4>
+                        <p>Top 3 high-impact items to close your biggest gaps</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>Downloadable Report</h4>
+                        <p>PDF for stakeholder presentations and planning</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">✓</div>
+                    <div class="feature-text">
+                        <h4>Unlimited Retakes</h4>
+                        <p>Track progress over time as your team evolves</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who This Is For -->
+    <section>
+        <div class="container fade-in">
+            <h2>Built for Communications Leaders Who Take AI Seriously</h2>
+            <div class="personas-grid">
+                <div class="persona-card">
+                    <div class="persona-icon">👔</div>
+                    <h3>VP/Director of Internal Communications</h3>
+                    <p>Leading your team through the AI transition with confidence</p>
+                </div>
+                <div class="persona-card">
+                    <div class="persona-icon">🏢</div>
+                    <h3>Corporate Communications Leaders</h3>
+                    <p>Balancing strategy, compliance, and innovation</p>
+                </div>
+                <div class="persona-card">
+                    <div class="persona-icon">🔄</div>
+                    <h3>Change & Transformation Leads</h3>
+                    <p>Helping teams navigate organizational shifts</p>
+                </div>
+                <div class="persona-card">
+                    <div class="persona-icon">🤝</div>
+                    <h3>Comms Agency Leaders</h3>
+                    <p>Serving enterprise clients managing AI readiness</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About / Credibility -->
+    <section class="dark">
+        <div class="container fade-in">
+            <div class="about-content">
+                <div>
+                    <h3>BUILT BY</h3>
+                    <div class="about-accent"></div>
+                    <h2>Vernon Ross</h2>
+                </div>
+                <div class="about-text">
+                    <p>Enterprise consultant specializing in AI implementation for corporate communications teams. Works with Fortune 500 companies to bridge the gap between AI capability and communications strategy.</p>
+                    <p style="margin-top: 1.5rem;">For over a decade, Vernon has helped leading organizations navigate complex transformations. The AI-Ready Comms Team Scorecard distills that experience into a practical tool designed for leaders like you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing / Buy Section -->
+    <section id="buy">
+        <div class="container fade-in">
+            <h2 style="text-align: center; margin-bottom: 0;">Get Your AI Readiness Score Today</h2>
+            <div class="pricing-card">
+                <p style="color: #4a4a6a; margin-bottom: 0;">One-time purchase</p>
+                <div class="price-amount"><span class="price-currency">$</span>37</div>
+                <p class="price-period">Unlimited use across your team</p>
+
+                <ul class="pricing-features">
+                    <li>Interactive 20-question assessment</li>
+                    <li>AI Readiness Score (0-100)</li>
+                    <li>Radar chart & dimension analysis</li>
+                    <li>Top 3 priority action items</li>
+                    <li>Downloadable PDF report</li>
+                </ul>
+
+                <a href="https://buy.stripe.com/8x214pgA36d965XaA42ZO01" class="btn btn-primary" style="width: 100%; text-align: center;">Get Instant Access</a>
+
+                <div class="guarantee">
+                    <strong>✓ Instant access</strong> after purchase. Use it with your whole team, right away.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="dark">
+        <div class="container fade-in">
+            <h2 style="text-align: center;">Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How does the Scorecard work?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Complete 20 targeted questions about your team's AI maturity across 5 dimensions. The assessment instantly calculates your overall AI Readiness Score and generates a visual dashboard with a radar chart showing your strengths and gaps. You'll receive dimension-specific analysis and your top 3 priority actions to improve.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I use this with my whole team?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. The $37 purchase gives you unlimited access. You can run the assessment multiple times, share results with your team, and use it across your entire communications department. It's designed to facilitate team conversations about AI readiness.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What happens after I buy?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You'll get instant access to the interactive assessment tool. Complete the 20 questions, receive your personalized AI Readiness Score and dashboard, download the PDF report, and start acting on your priority recommendations immediately.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is this relevant for agencies / in-house teams / my industry?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The Scorecard is built for corporate communications teams — both in-house and agency. Whether you work in financial services, healthcare, tech, retail, or any other industry, the assessment framework applies. The questions are tailored to professional communications contexts, not marketing or creative agencies.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How is this different from free AI readiness tools?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>This tool is built specifically for corporate communications teams, not generic organizations. It measures 5 dimensions critical to comms: strategy alignment, tools integration, team capability, workflow adoption, and governance. The insights and recommendations are tailored to communications leaders, not generic audiences. Plus, it's backed by Vernon's experience implementing AI across Fortune 500 communications teams.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Vernon Ross. All rights reserved.</p>
+            <p><a href="index.html">Back to Assessment Tool</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Counter animation for stats
+        function animateCounter(element, target, duration = 2000) {
+            let current = 0;
+            const increment = target / (duration / 50);
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.round(current);
+                }
+            }, 50);
+        }
+
+        const statsObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(el => {
+                        const target = parseInt(el.textContent);
+                        if (!el.animated) {
+                            animateCounter(el, target);
+                            el.animated = true;
+                        }
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const darkSections = document.querySelectorAll('section.dark');
+        darkSections.forEach(section => {
+            if (section.querySelector('.stats-grid')) {
+                statsObserver.observe(section);
+            }
+        });
+
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.closest('.faq-item');
+                item.classList.toggle('active');
+            });
+        });
+
+        // Mobile nav toggle (simple version for responsiveness)
+        let headerHeight = document.querySelector('header').offsetHeight;
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 0) {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.boxShadow = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
