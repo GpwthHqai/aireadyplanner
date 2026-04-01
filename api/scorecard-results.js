@@ -1,27 +1,37 @@
 /**
  * Vercel Serverless API Route: Scorecard Results Handler
  *
- * This endpoint receives AI Readiness Scorecard results and forwards them to:
- * 1. GoHighLevel (GHL) for contact creation/update
- * 2. Email notification to Vernon Ross
+ * Receives AI Readiness Scorecard results and:
+ * 1. Creates/updates a contact in GoHighLevel via API
+ * 2. Sends email notification to Vernon via Resend
  *
- * REQUIRED ENVIRONMENT VARIABLES:
- * - GHL_WEBHOOK_URL: Your GoHighLevel webhook endpoint for contact creation
- *   Example: https://api.gohighlevel.com/v1/contacts
- *   Set in Vercel Dashboard → Project Settings → Environment Variables
+ * REQUIRED ENVIRONMENT VARIABLES (set in Vercel Dashboard → Project Settings → Environment Variables):
  *
- * - EMAIL_WEBHOOK_URL: Webhook for sending email notifications
- *   Can be: Zapier webhook, Make webhook, or custom SMTP service
- *   Example: https://hooks.zapier.com/hooks/catch/xxxxx/yyyy/
- *   If not set, email notifications will be logged to console
+ * - GHL_API_KEY: Your GoHighLevel API key (Bearer token)
+ *   Get from: GHL → Settings → Business Profile → API Keys
  *
- * CORS: Allows requests from aireadyplanner.com and localhost
+ * - GHL_LOCATION_ID: Your GHL sub-account location ID
+ *   Default: k5BVmKqYNLuQskIWpq1K (Stories That Lead Podcast sub-account)
+ *
+ * - RESEND_API_KEY: Your Resend API key
+ *   Get from: https://resend.com/api-keys
+ *   Free tier: 100 emails/day, 3,000/month
+ *
+ * - NOTIFICATION_EMAIL: Where to send score alerts (default: vernon@vernonross.com)
+ *
+ * - RESEND_FROM: Sender address (default: notifications@aireadyplanner.com)
+ *   Must be a verified domain in Resend, or use onboarding@resend.dev for testing
  */
 
 export default async function handler(req, res) {
   // CORS headers
   const origin = req.headers.origin || '';
-  const allowedOrigins = ['https://aireadyplanner.com', 'http://localhost:3000', 'http://localhost:5173'];
+  const allowedOrigins = [
+    'https://aireadyplanner.com',
+    'https://www.aireadyplanner.com',
+    'http://localhost:3000',
+    'http://localhost:5173'
+  ];
 
   if (allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
@@ -30,168 +40,197 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight requests
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only accept POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const payload = req.body;
 
-  // Validation: Check required fields
+  // Validate required fields
   const requiredFields = ['firstName', 'lastName', 'email', 'overallScore', 'dimensions'];
   const missingFields = requiredFields.filter(field => !payload[field]);
 
   if (missingFields.length > 0) {
-    return res.status(400).json({
-      error: 'Invalid input data',
-      missingFields
-    });
+    return res.status(400).json({ error: 'Invalid input data', missingFields });
   }
 
-  // Validate dimensions object has required score fields
   const requiredDimensions = ['strategy', 'tools', 'skills', 'content', 'governance'];
   const missingDimensions = requiredDimensions.filter(dim => payload.dimensions[dim] === undefined);
 
   if (missingDimensions.length > 0) {
-    return res.status(400).json({
-      error: 'Invalid dimensions data',
-      missingDimensions
-    });
+    return res.status(400).json({ error: 'Invalid dimensions data', missingDimensions });
   }
 
-  // Extract and transform data for GHL
-  const ghlPayload = {
-    first_name: payload.firstName,
-    last_name: payload.lastName,
-    email: payload.email,
-    company_name: payload.company || '',
-    customField: {
-      team_size: payload.teamSize || '',
-      ai_readiness_score: payload.overallScore,
-      ai_maturity_level: payload.maturityLevel || '',
-      strategy_score: payload.dimensions.strategy,
-      tools_score: payload.dimensions.tools,
-      skills_score: payload.dimensions.skills,
-      content_score: payload.dimensions.content,
-      governance_score: payload.dimensions.governance,
-      top_insights: payload.smartInsights ? payload.smartInsights.join('; ') : '',
-      scorecard_completed: payload.timestamp || new Date().toISOString()
-    },
-    tags: ['scorecard-completed', 'ai-readiness-diagnostic']
-  };
+  // Fire-and-forget: GHL contact creation + Resend email
+  sendToGHL(payload).catch(err => console.error('GHL error:', err.message));
+  sendResendEmail(payload).catch(err => console.error('Resend error:', err.message));
 
-  // Prepare email body
-  const emailBody = `Subject: New Scorecard: ${payload.firstName} ${payload.lastName} (${payload.company || 'N/A'}) - Score: ${payload.overallScore}/100
-
-New AI Readiness Scorecard Completed
-
-Name: ${payload.firstName} ${payload.lastName}
-Email: ${payload.email}
-Company: ${payload.company || 'N/A'}
-Team Size: ${payload.teamSize || 'Not specified'}
-
-Overall Score: ${payload.overallScore}/100 (${payload.maturityLevel || 'Unknown'})
-
-Dimension Scores:
-- Strategy: ${payload.dimensions.strategy}
-- Tools: ${payload.dimensions.tools}
-- Skills: ${payload.dimensions.skills}
-- Content: ${payload.dimensions.content}
-- Governance: ${payload.dimensions.governance}
-
-Key Insights:
-${payload.smartInsights && payload.smartInsights.length > 0
-  ? payload.smartInsights.map(insight => `- ${insight}`).join('\n')
-  : '- No insights provided'}
-
-Completed: ${payload.timestamp || new Date().toISOString()}`;
-
-  const emailPayload = {
-    subject: `New Scorecard: ${payload.firstName} ${payload.lastName} (${payload.company || 'N/A'}) - Score: ${payload.overallScore}/100`,
-    body: emailBody,
-    to: 'vernon@aireadyplanner.com', // Update with correct email if needed
-    scorecard: {
-      firstName: payload.firstName,
-      lastName: payload.lastName,
-      email: payload.email,
-      company: payload.company,
-      overallScore: payload.overallScore,
-      maturityLevel: payload.maturityLevel,
-      dimensions: payload.dimensions,
-      timestamp: payload.timestamp
-    }
-  };
-
-  // Fire-and-forget: Send to GHL
-  sendToGHL(ghlPayload).catch(error => {
-    console.error('GHL webhook error:', error.message);
-    // Don't throw - this is fire-and-forget
-  });
-
-  // Fire-and-forget: Send email notification
-  sendEmailNotification(emailPayload).catch(error => {
-    console.error('Email webhook error:', error.message);
-    // Don't throw - this is fire-and-forget
-  });
-
-  // Return success immediately to client
-  return res.status(200).json({ success: true, message: 'Scorecard received' });
+  // Return immediately — don't block on integrations
+  return res.status(200).json({ success: true });
 }
 
 /**
- * Send scorecard data to GHL webhook
+ * Create or update contact in GoHighLevel
  */
 async function sendToGHL(payload) {
-  const webhookUrl = process.env.GHL_WEBHOOK_URL;
+  const apiKey = process.env.GHL_API_KEY;
+  const locationId = process.env.GHL_LOCATION_ID || 'k5BVmKqYNLuQskIWpq1K';
 
-  if (!webhookUrl) {
-    console.warn('GHL_WEBHOOK_URL not configured - skipping GHL integration');
+  if (!apiKey) {
+    console.warn('GHL_API_KEY not configured — skipping GHL');
     return;
   }
 
-  const response = await fetch(webhookUrl, {
+  const contactPayload = {
+    locationId,
+    firstName: payload.firstName,
+    lastName: payload.lastName,
+    email: payload.email,
+    companyName: payload.company || '',
+    tags: ['scorecard-completed', 'ai-readiness-diagnostic'],
+    customFields: [
+      { key: 'team_size', field_value: payload.teamSize || '' },
+      { key: 'ai_readiness_score', field_value: String(payload.overallScore) },
+      { key: 'ai_maturity_level', field_value: payload.maturityLevel || '' },
+      { key: 'strategy_score', field_value: String(payload.dimensions.strategy) },
+      { key: 'tools_score', field_value: String(payload.dimensions.tools) },
+      { key: 'skills_score', field_value: String(payload.dimensions.skills) },
+      { key: 'content_score', field_value: String(payload.dimensions.content) },
+      { key: 'governance_score', field_value: String(payload.dimensions.governance) },
+      { key: 'top_insights', field_value: payload.smartInsights ? payload.smartInsights.join('; ') : '' },
+      { key: 'scorecard_completed', field_value: payload.timestamp || new Date().toISOString() }
+    ]
+  };
+
+  // Use GHL v2 contacts/upsert endpoint — creates if new, updates if email exists
+  const response = await fetch('https://services.leadconnectorhq.com/contacts/upsert', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'Version': '2021-07-28'
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(contactPayload)
   });
 
   if (!response.ok) {
-    throw new Error(`GHL webhook returned ${response.status}: ${response.statusText}`);
+    const body = await response.text();
+    throw new Error(`GHL API ${response.status}: ${body}`);
   }
 
-  console.log('Successfully sent scorecard to GHL');
+  console.log('GHL contact created/updated');
 }
 
 /**
- * Send email notification via webhook or log to console
+ * Send email notification via Resend
  */
-async function sendEmailNotification(payload) {
-  const webhookUrl = process.env.EMAIL_WEBHOOK_URL;
+async function sendResendEmail(payload) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.NOTIFICATION_EMAIL || 'vernon@vernonross.com';
+  const fromEmail = process.env.RESEND_FROM || 'onboarding@resend.dev';
 
-  if (!webhookUrl) {
-    console.log('EMAIL_WEBHOOK_URL not configured - logging email instead:');
-    console.log(payload.body);
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY not configured — logging scorecard instead:');
+    console.log(JSON.stringify(payload, null, 2));
     return;
   }
 
-  const response = await fetch(webhookUrl, {
+  const dims = payload.dimensions;
+  const insights = payload.smartInsights && payload.smartInsights.length > 0
+    ? payload.smartInsights.map(i => `• ${i}`).join('\n')
+    : 'None generated';
+
+  // Build a clean HTML email
+  const html = `
+    <div style="font-family: Inter, Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <div style="background: #0A1628; padding: 24px 32px; border-radius: 8px 8px 0 0;">
+        <h1 style="color: #D4AF55; margin: 0; font-size: 20px;">New Scorecard Completed</h1>
+      </div>
+      <div style="background: #f8f9fa; padding: 32px; border-radius: 0 0 8px 8px;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+          <tr>
+            <td style="padding: 8px 0; font-weight: 600; color: #0A1628;">Name</td>
+            <td style="padding: 8px 0;">${payload.firstName} ${payload.lastName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: 600; color: #0A1628;">Email</td>
+            <td style="padding: 8px 0;"><a href="mailto:${payload.email}">${payload.email}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: 600; color: #0A1628;">Company</td>
+            <td style="padding: 8px 0;">${payload.company || 'Not provided'}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: 600; color: #0A1628;">Team Size</td>
+            <td style="padding: 8px 0;">${payload.teamSize || 'Not specified'}</td>
+          </tr>
+        </table>
+
+        <div style="background: white; border-radius: 8px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #D4AF55;">
+          <div style="font-size: 48px; font-weight: 900; color: #0A1628; margin-bottom: 4px;">${payload.overallScore}/100</div>
+          <div style="font-size: 14px; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px;">${payload.maturityLevel || 'Unknown'}</div>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+          <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 10px 0; font-weight: 600;">Strategy</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: ${dims.strategy >= 60 ? '#065f46' : dims.strategy >= 40 ? '#92400e' : '#7f1d1d'};">${dims.strategy}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 10px 0; font-weight: 600;">Tools</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: ${dims.tools >= 60 ? '#065f46' : dims.tools >= 40 ? '#92400e' : '#7f1d1d'};">${dims.tools}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 10px 0; font-weight: 600;">Skills</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: ${dims.skills >= 60 ? '#065f46' : dims.skills >= 40 ? '#92400e' : '#7f1d1d'};">${dims.skills}</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #e9ecef;">
+            <td style="padding: 10px 0; font-weight: 600;">Content</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: ${dims.content >= 60 ? '#065f46' : dims.content >= 40 ? '#92400e' : '#7f1d1d'};">${dims.content}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; font-weight: 600;">Governance</td>
+            <td style="padding: 10px 0; text-align: right; font-weight: 700; color: ${dims.governance >= 60 ? '#065f46' : dims.governance >= 40 ? '#92400e' : '#7f1d1d'};">${dims.governance}</td>
+          </tr>
+        </table>
+
+        <div style="background: white; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+          <div style="font-weight: 600; margin-bottom: 8px; color: #0A1628;">Key Insights:</div>
+          <div style="white-space: pre-line; color: #6B7280; font-size: 14px;">${insights}</div>
+        </div>
+
+        <div style="text-align: center; padding-top: 16px;">
+          <a href="https://bookme.name/vernon/lite/ai-readiness-diagnostic-discovery-call"
+             style="display: inline-block; background: #D4AF55; color: #0A1628; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+            View in GHL
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({
+      from: fromEmail,
+      to: [toEmail],
+      subject: `🎯 Scorecard: ${payload.firstName} ${payload.lastName} (${payload.company || 'N/A'}) — ${payload.overallScore}/100`,
+      html
+    })
   });
 
   if (!response.ok) {
-    throw new Error(`Email webhook returned ${response.status}: ${response.statusText}`);
+    const body = await response.text();
+    throw new Error(`Resend API ${response.status}: ${body}`);
   }
 
-  console.log('Successfully sent email notification');
+  console.log('Resend email sent');
 }
