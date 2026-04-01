@@ -2,6 +2,10 @@
   "version": 2,
   "routes": [
     {
+      "src": "/api/scorecard-results",
+      "dest": "/api/scorecard-results.js"
+    },
+    {
       "src": "/scorecard",
       "dest": "/scorecard/index.html"
     },
