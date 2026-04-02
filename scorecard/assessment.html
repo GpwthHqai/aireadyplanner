@@ -1672,6 +1672,9 @@
         }
 
         function unlockReport(firstName, lastName, email, company, teamSize) {
+            // Generate smart insights FIRST so resultsData.smartInsights is available
+            renderSmartInsights();
+
             // Send data to API
             const payload = {
                 firstName: firstName,
@@ -1705,9 +1708,6 @@
             document.querySelectorAll('.dimension-assessment, .recommendation').forEach(el => {
                 el.classList.remove('locked');
             });
-
-            // Render smart insights
-            renderSmartInsights();
         }
 
         function handleEmailSubmit(event) {
