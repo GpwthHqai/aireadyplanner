@@ -6,8 +6,16 @@
       "dest": "/api/scorecard-results.js"
     },
     {
+      "src": "/api/process-transcript",
+      "dest": "/api/process-transcript.js"
+    },
+    {
       "src": "/scorecard",
       "dest": "/scorecard/index.html"
+    },
+    {
+      "src": "/scorecard/diagnostic",
+      "dest": "/scorecard/diagnostic.html"
     },
     {
       "src": "/scorecard/thank-you",

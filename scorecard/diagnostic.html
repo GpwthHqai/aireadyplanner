@@ -1,0 +1,2765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Internal diagnostic intake tool for Vernon Ross AI Readiness Diagnostic">
+    <title>AI Readiness Diagnostic Intake | Vernon Ross</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================================
+           DESIGN TOKENS & VARIABLES
+           ============================================================ */
+        :root {
+            --navy-deep: #0a1628;
+            --navy-mid: #0f1f3d;
+            --gold: #c9a84c;
+            --gold-light: #e2c06e;
+            --orange-cta: #ce3c06;
+            --off-white: #e8e4dc;
+            --muted: #8899b4;
+            --bg-light: #f8f7f5;
+            --border-light: #ddd8d0;
+            --text-dark: #1a1a1a;
+            --text-muted: #666666;
+            --success: #2d7d3a;
+            --warning: #d97706;
+
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ============================================================
+           RESET & BASE STYLES
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--navy-deep);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           TYPOGRAPHY
+           ============================================================ */
+        h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--navy-deep);
+            line-height: 1.2;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.875rem;
+            font-weight: 600;
+            color: var(--navy-deep);
+            margin-bottom: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--navy-mid);
+            margin-bottom: var(--spacing-md);
+        }
+
+        h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--navy-deep);
+        }
+
+        p, label {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: var(--spacing-md);
+        }
+
+        strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           BUTTONS & CONTROLS
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            white-space: nowrap;
+            gap: var(--spacing-sm);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--orange-cta);
+            color: white;
+            box-shadow: 0 4px 12px rgba(206, 60, 6, 0.2);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #b33204;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(206, 60, 6, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--gold);
+            color: var(--navy-deep);
+            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.2);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--navy-deep);
+            border: 2px solid var(--navy-deep);
+        }
+
+        .btn-outline:hover:not(:disabled) {
+            background: var(--navy-deep);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-size: 0.875rem;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            padding: var(--spacing-sm) var(--spacing-md);
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            color: var(--text-dark);
+        }
+
+        /* ============================================================
+           LAYOUT & CONTAINER
+           ============================================================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .app-wrapper {
+            background: white;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           HEADER & BRANDING
+           ============================================================ */
+        .header {
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+            color: white;
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .header p {
+            color: var(--off-white);
+            font-size: 1.125rem;
+            margin: 0;
+        }
+
+        /* ============================================================
+           FORM STYLES
+           ============================================================ */
+        .form-group {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .form-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--navy-deep);
+        }
+
+        label .required {
+            color: var(--orange-cta);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: var(--spacing-md);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 6px;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-size: 0.95rem;
+        }
+
+        /* ============================================================
+           TAB NAVIGATION
+           ============================================================ */
+        .tabs {
+            display: flex;
+            gap: var(--spacing-md);
+            border-bottom: 2px solid var(--border-light);
+            margin-bottom: var(--spacing-2xl);
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--muted);
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            margin-bottom: -2px;
+        }
+
+        .tab-btn.active {
+            color: var(--orange-cta);
+            border-bottom-color: var(--orange-cta);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-dark);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ============================================================
+           COLLAPSIBLE SECTIONS
+           ============================================================ */
+        .phase-section {
+            background: var(--bg-light);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            margin-bottom: var(--spacing-xl);
+            overflow: hidden;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-lg);
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+            color: white;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+        }
+
+        .phase-header:hover {
+            background: var(--navy-deep);
+        }
+
+        .phase-header h3 {
+            color: white;
+            margin: 0;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gold);
+            color: var(--navy-deep);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .phase-toggle {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gold);
+            border-radius: 4px;
+            color: var(--navy-deep);
+            font-weight: bold;
+            transition: var(--transition);
+        }
+
+        .phase-section.collapsed .phase-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .phase-content {
+            padding: var(--spacing-lg);
+            background: white;
+            display: none;
+        }
+
+        .phase-section:not(.collapsed) .phase-content {
+            display: block;
+        }
+
+        /* ============================================================
+           QUESTION STYLES
+           ============================================================ */
+        .question-block {
+            margin-bottom: var(--spacing-2xl);
+            padding-bottom: var(--spacing-xl);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+        }
+
+        .question-text {
+            font-weight: 600;
+            color: var(--navy-deep);
+            margin-bottom: var(--spacing-md);
+            font-size: 1.05rem;
+        }
+
+        .question-input {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .insight-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            color: var(--gold);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-top: var(--spacing-sm);
+        }
+
+        .insight-toggle:hover {
+            color: var(--gold-light);
+        }
+
+        .insight-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            transition: var(--transition);
+        }
+
+        .insight-toggle.open .insight-icon {
+            transform: rotate(180deg);
+        }
+
+        .insight-content {
+            display: none;
+            margin-top: var(--spacing-md);
+            padding: var(--spacing-md);
+            background: #fef8f0;
+            border-left: 4px solid var(--gold);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .insight-content.open {
+            display: block;
+        }
+
+        /* ============================================================
+           UPLOAD AREA
+           ============================================================ */
+        .upload-area {
+            border: 2px dashed var(--border-light);
+            border-radius: 8px;
+            padding: var(--spacing-2xl);
+            text-align: center;
+            background: var(--bg-light);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .upload-area:hover {
+            border-color: var(--gold);
+            background: #fef8f0;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--orange-cta);
+            background: rgba(206, 60, 6, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .upload-text {
+            font-weight: 600;
+            color: var(--navy-deep);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .upload-subtext {
+            font-size: 0.875rem;
+            color: var(--muted);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* ============================================================
+           REPORT STYLES
+           ============================================================ */
+        .report-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .report-overlay.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: var(--spacing-xl);
+        }
+
+        .report-container {
+            background: white;
+            width: 100%;
+            max-width: 900px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .report-actions {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            background: var(--navy-deep);
+            color: white;
+            border-bottom: 2px solid var(--gold);
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .report-actions .btn {
+            margin: 0;
+        }
+
+        .report-content {
+            padding: var(--spacing-2xl);
+        }
+
+        /* Report sections */
+        .report-cover {
+            text-align: center;
+            padding: var(--spacing-2xl);
+            background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+            color: white;
+            border-bottom: 4px solid var(--gold);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .report-cover h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .report-cover .meta {
+            font-size: 1.125rem;
+            color: var(--off-white);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .report-section {
+            margin-bottom: var(--spacing-2xl);
+            page-break-inside: avoid;
+        }
+
+        .report-section h2 {
+            border-bottom: 3px solid var(--gold);
+            padding-bottom: var(--spacing-md);
+            margin-top: 0;
+        }
+
+        .report-subsection h3 {
+            color: var(--navy-mid);
+            margin-top: var(--spacing-lg);
+        }
+
+        .dimension-score {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .dimension-card {
+            background: var(--bg-light);
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .dimension-name {
+            font-weight: 600;
+            color: var(--navy-deep);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .dimension-score-number {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: var(--spacing-md) 0;
+        }
+
+        .dimension-insight {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .finding {
+            background: #f0f7ff;
+            border-left: 4px solid var(--navy-mid);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            border-radius: 4px;
+        }
+
+        .finding strong {
+            color: var(--navy-deep);
+        }
+
+        .recommendation {
+            background: var(--bg-light);
+            border-left: 4px solid var(--orange-cta);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            border-radius: 4px;
+        }
+
+        .recommendation-title {
+            font-weight: 700;
+            color: var(--navy-deep);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .recommendation-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .recommendation-impact {
+            display: inline-block;
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--orange-cta);
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        th {
+            background: var(--navy-deep);
+            color: white;
+            padding: var(--spacing-md);
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+
+        /* ============================================================
+           UTILITY & STATE
+           ============================================================ */
+        .hidden {
+            display: none !important;
+        }
+
+        .success-message {
+            background: #dcf4e1;
+            border-left: 4px solid var(--success);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            border-radius: 4px;
+            color: var(--success);
+        }
+
+        .warning-message {
+            background: #fef3e1;
+            border-left: 4px solid var(--warning);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            border-radius: 4px;
+            color: var(--warning);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--gold);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============================================================
+           PRINT STYLES
+           ============================================================ */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .report-overlay {
+                position: static;
+                background: none;
+            }
+
+            .report-container {
+                max-width: none;
+                box-shadow: none;
+            }
+
+            .report-actions {
+                display: none;
+            }
+
+            .report-content {
+                padding: 0;
+            }
+
+            .phase-section,
+            .tab-btn,
+            .btn,
+            .form-group,
+            .header {
+                display: none;
+            }
+
+            .report-section {
+                page-break-inside: avoid;
+            }
+
+            h2 {
+                page-break-after: avoid;
+            }
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+
+            .header {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+                border-bottom: none;
+                gap: 0;
+            }
+
+            .tab-btn {
+                padding: var(--spacing-md);
+                border-bottom: 2px solid var(--border-light);
+                margin-bottom: 0;
+            }
+
+            .tab-btn.active {
+                border-bottom-color: var(--orange-cta);
+            }
+
+            .report-overlay.active {
+                padding: var(--spacing-md);
+            }
+
+            .report-container {
+                max-height: none;
+            }
+
+            .report-actions {
+                flex-direction: column;
+            }
+
+            .report-actions .btn {
+                width: 100%;
+            }
+
+            .dimension-score {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .report-content {
+                padding: var(--spacing-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1>AI Readiness Diagnostic</h1>
+                <p>Intake Tool for Enterprise Assessment Sessions</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Client Info Section -->
+            <div class="form-group">
+                <h2>Client Information</h2>
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="companyName">Company Name <span class="required">*</span></label>
+                        <input type="text" id="companyName" placeholder="Enter client company name">
+                    </div>
+                    <div class="form-col">
+                        <label for="contactDate">Diagnostic Date <span class="required">*</span></label>
+                        <input type="date" id="contactDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="contactFirstName">Contact First Name <span class="required">*</span></label>
+                        <input type="text" id="contactFirstName" placeholder="First name">
+                    </div>
+                    <div class="form-col">
+                        <label for="contactLastName">Contact Last Name <span class="required">*</span></label>
+                        <input type="text" id="contactLastName" placeholder="Last name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="contactTitle">Contact Title</label>
+                        <input type="text" id="contactTitle" placeholder="e.g., VP of Marketing, Content Director">
+                    </div>
+                    <div class="form-col">
+                        <label for="contactEmail">Contact Email</label>
+                        <input type="email" id="contactEmail" placeholder="email@company.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="teamSize">Team Size (# of people)</label>
+                        <input type="number" id="teamSize" min="1" placeholder="e.g., 12">
+                    </div>
+                    <div class="form-col">
+                        <label for="contentVolume">Monthly Content Volume (# of pieces)</label>
+                        <input type="number" id="contentVolume" min="0" placeholder="e.g., 45">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <label for="scorecardScore">Scorecard Score (Overall) - Optional</label>
+                        <input type="number" id="scorecardScore" min="0" max="100" placeholder="e.g., 47">
+                    </div>
+                    <div class="form-col">
+                        <label for="scorecardStrategy">Strategy Score</label>
+                        <input type="number" id="scorecardStrategy" min="0" max="100" placeholder="e.g., 55">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode Toggle -->
+            <div style="margin-bottom: var(--spacing-2xl); border-bottom: 2px solid var(--border-light); padding-bottom: var(--spacing-lg);">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="live-mode">Live Session Mode</button>
+                    <button class="tab-btn" data-tab="transcript-mode">Upload Transcript</button>
+                </div>
+            </div>
+
+            <!-- LIVE SESSION MODE -->
+            <div id="live-mode" class="tab-content active">
+                <!-- Phase 1: Context & Discovery -->
+                <div class="phase-section">
+                    <div class="phase-header">
+                        <h3>
+                            <span class="phase-badge">1</span>
+                            Phase 1: Context & Discovery
+                        </h3>
+                        <div class="phase-toggle">▶</div>
+                    </div>
+                    <div class="phase-content">
+                        <div class="question-block">
+                            <div class="question-text">1. What are the primary business goals for your organization over the next 12 months?</div>
+                            <div class="question-input">
+                                <textarea id="q1-1" placeholder="e.g., Increase market share, launch new product line, improve customer retention..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-1">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-1">
+                                Understanding strategic priorities helps identify where AI can create competitive advantage. Look for revenue growth, market expansion, or operational efficiency goals.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">2. How is your organization currently using AI or AI-adjacent tools (ChatGPT, Copilot, automation, etc.)?</div>
+                            <div class="question-input">
+                                <textarea id="q1-2" placeholder="Describe current usage, tools, frequency, and departments involved..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-2">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-2">
+                                Current AI adoption reveals the baseline maturity and identifies shadow AI use. This informs recommendations and risk areas.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">3. What specific pain points or bottlenecks are slowing down your communications and content creation?</div>
+                            <div class="question-input">
+                                <textarea id="q1-3" placeholder="Describe key challenges, delays, resource constraints, quality issues..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-3">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-3">
+                                Pain points map directly to AI opportunities. This surfaces the "where to start" for recommendations.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">4. Who are your primary audiences and what content types do you create for them?</div>
+                            <div class="question-input">
+                                <textarea id="q1-4" placeholder="e.g., Internal comms, customer marketing, leadership thought leadership, sales enablement..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-4">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-4">
+                                Audience and content type inform the right AI applications and data governance model.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">5. What's your content creation process from idea to publishing? How long does it typically take?</div>
+                            <div class="question-input">
+                                <textarea id="q1-5" placeholder="Describe workflow, approvals, stages, timelines..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-5">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-5">
+                                Process mapping reveals where AI can eliminate steps, reduce cycle time, and improve quality gates.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">6. Who are the key stakeholders in content approval and decision-making?</div>
+                            <div class="question-input">
+                                <textarea id="q1-6" placeholder="Titles/roles, approval authority, decision criteria..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-6">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-6">
+                                Stakeholder mapping informs change management, governance structure, and adoption readiness.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">7. How does your team currently measure content performance and ROI?</div>
+                            <div class="question-input">
+                                <textarea id="q1-7" placeholder="Metrics, tools, frequency of measurement, use of insights..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-7">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-7">
+                                Existing measurement practices inform post-AI performance tracking and success metrics.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">8. What communication channels do you prioritize? (email, website, social, internal, video, etc.)</div>
+                            <div class="question-input">
+                                <textarea id="q1-8" placeholder="List channels by importance and volume..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-8">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-8">
+                                Channel priorities determine which AI tools and applications should be prioritized first.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">9. What are your biggest concerns about adopting AI in communications?</div>
+                            <div class="question-input">
+                                <textarea id="q1-9" placeholder="e.g., Brand consistency, job displacement, security, accuracy, compliance..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-9">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-9">
+                                Concerns surface potential adoption barriers and the need for governance, training, and risk mitigation.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">10. How do you currently manage brand voice and consistency across your communications?</div>
+                            <div class="question-input">
+                                <textarea id="q1-10" placeholder="Style guides, templates, training, review processes..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-10">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-10">
+                                Brand voice governance readiness determines whether AI-assisted content can maintain consistency or needs guardrails.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">11. What's your biggest challenge with current team capacity and resource constraints?</div>
+                            <div class="question-input">
+                                <textarea id="q1-11" placeholder="Understaffing, burnout, skill gaps, competing priorities..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-11">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-11">
+                                Resource constraints are a primary driver for AI adoption. Quantifies the value of efficiency gains.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">12. How aligned is your team on AI adoption, and what might be their concerns?</div>
+                            <div class="question-input">
+                                <textarea id="q1-12" placeholder="Team sentiment, resistance, skill concerns, opportunities seen..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-12">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-12">
+                                Team alignment is critical for successful AI implementation. Identifies training needs and change management strategy.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">13. What does success look like for AI in your communications function over the next 12 months?</div>
+                            <div class="question-input">
+                                <textarea id="q1-13" placeholder="Efficiency gains, faster turnaround, more content, improved quality, cost savings..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-13">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-13">
+                                Success metrics drive the roadmap and measure impact of recommendations.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">14. Are there any compliance, security, or governance requirements we need to be aware of?</div>
+                            <div class="question-input">
+                                <textarea id="q1-14" placeholder="Regulatory, data privacy, IP protection, approval requirements..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-14">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-14">
+                                Compliance requirements shape the governance model and tool selection for AI implementation.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">15. What budget or resources are you prepared to invest in AI-driven improvements?</div>
+                            <div class="question-input">
+                                <textarea id="q1-15" placeholder="Budget range, timeline for investment, ROI expectations..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-15">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-15">
+                                Budget constraints and ROI expectations guide recommendation scope and phasing.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">16. Who owns the decisions about adopting new tools and processes? What's the approval timeline?</div>
+                            <div class="question-input">
+                                <textarea id="q1-16" placeholder="Decision authority, approval process, timeline for implementation..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-16">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-16">
+                                Decision-making authority and timelines inform the roadmap and engagement strategy with leadership.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">17. Are there specific tools, platforms, or systems you're already invested in that we should integrate with?</div>
+                            <div class="question-input">
+                                <textarea id="q1-17" placeholder="Martech stack, CMS, email platform, analytics tools, etc..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-17">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-17">
+                                Existing tool ecosystem determines which AI solutions can be integrated and which require replacement.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">18. What would be your ideal first step or quick win with AI in the next 30-60 days?</div>
+                            <div class="question-input">
+                                <textarea id="q1-18" placeholder="Specific workflow, content type, or team that would benefit most..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q1-18">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q1-18">
+                                Quick-win preferences inform the sprint scope and momentum-building recommendations.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Workflow Mapping -->
+                <div class="phase-section">
+                    <div class="phase-header">
+                        <h3>
+                            <span class="phase-badge">2</span>
+                            Phase 2: Workflow Mapping
+                        </h3>
+                        <div class="phase-toggle">▶</div>
+                    </div>
+                    <div class="phase-content">
+                        <div class="question-block">
+                            <div class="question-text">1. Describe your main content workflows (e.g., blog posts, email campaigns, social content, thought leadership)</div>
+                            <div class="question-input">
+                                <textarea id="q2-1" placeholder="List primary workflows and how they differ..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-1">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-1">
+                                Workflow inventory helps identify which processes benefit most from AI acceleration.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">2. For your primary content workflow, what are the key steps and bottlenecks?</div>
+                            <div class="question-input">
+                                <textarea id="q2-2" placeholder="Steps from idea through publication, where delays occur..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-2">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-2">
+                                Bottleneck identification is critical for AI opportunity prioritization.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">3. How long does each stage typically take (research, drafting, editing, approval, publishing)?</div>
+                            <div class="question-input">
+                                <textarea id="q2-3" placeholder="Hours/days per stage, variability..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-3">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-3">
+                                Time allocation reveals where AI can deliver the biggest time savings.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">4. Who's involved in each step and what's their role? (Creator, reviewer, approver, publisher)</div>
+                            <div class="question-input">
+                                <textarea id="q2-4" placeholder="Roles and responsibilities per workflow stage..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-4">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-4">
+                                Role clarity informs which teams need AI training and which AI tools serve which functions.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">5. What quality standards or review criteria are applied before publishing?</div>
+                            <div class="question-input">
+                                <textarea id="q2-5" placeholder="Brand voice check, accuracy, tone, SEO, compliance, etc..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-5">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-5">
+                                Quality criteria determine guardrails needed in AI-generated content and review processes.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">6. Where do you currently source research, data, or inspiration for content?</div>
+                            <div class="question-input">
+                                <textarea id="q2-6" placeholder="Internal knowledge, external research, customer insights, competitive analysis..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-6">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-6">
+                                Research sourcing informs where AI can augment or accelerate discovery and synthesis.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">7. What handoffs or communication challenges exist between stages or teams?</div>
+                            <div class="question-input">
+                                <textarea id="q2-7" placeholder="Delayed approvals, unclear feedback, tool switching, silos..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-7">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-7">
+                                Handoff inefficiencies are prime targets for workflow automation and tool integration.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">8. How do you repurpose or reuse content across channels or formats?</div>
+                            <div class="question-input">
+                                <textarea id="q2-8" placeholder="Cross-channel syndication, format adaptation, content recycling..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-8">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-8">
+                                Repurposing practices reveal where AI can multiply content ROI and channel reach.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">9. What templates, frameworks, or standardized approaches help your team stay efficient?</div>
+                            <div class="question-input">
+                                <textarea id="q2-9" placeholder="Content templates, process checklists, style guides..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-9">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-9">
+                                Existing frameworks can be enhanced or automated with AI, increasing throughput.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">10. Are there any metrics or KPIs you track for each workflow? How do they inform improvements?</div>
+                            <div class="question-input">
+                                <textarea id="q2-10" placeholder="Time-to-publish, quality scores, engagement metrics, productivity measures..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-10">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-10">
+                                Existing workflow metrics provide baseline for measuring AI impact post-implementation.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">11. How often do workflows change, and what triggers updates or process improvements?</div>
+                            <div class="question-input">
+                                <textarea id="q2-11" placeholder="Seasonal changes, new tools, team restructuring, feedback cycles..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-11">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-11">
+                                Process change frequency reveals organizational agility and receptiveness to AI-enabled workflows.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">12. Of all your content workflows, which one should we prioritize for AI integration first?</div>
+                            <div class="question-input">
+                                <textarea id="q2-12" placeholder="Which workflow would benefit most from AI, has highest ROI potential..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q2-12">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q2-12">
+                                Priority workflow selection informs the sprint scope recommendation and first-implementation roadmap.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Technology Audit -->
+                <div class="phase-section">
+                    <div class="phase-header">
+                        <h3>
+                            <span class="phase-badge">3</span>
+                            Phase 3: Technology Audit
+                        </h3>
+                        <div class="phase-toggle">▶</div>
+                    </div>
+                    <div class="phase-content">
+                        <div class="question-block">
+                            <div class="question-text">1. What tools do you currently use for content creation, management, and distribution?</div>
+                            <div class="question-input">
+                                <textarea id="q3-1" placeholder="CMS, email platform, design tools, analytics, collaboration tools..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-1">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-1">
+                                Current tech stack reveals integration opportunities and potential AI tool conflicts.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">2. Are there any AI tools (ChatGPT, Claude, Jasper, Copy.ai, etc.) your team is already using informally?</div>
+                            <div class="question-input">
+                                <textarea id="q3-2" placeholder="Shadow AI inventory - tools, departments, frequency of use..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-2">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-2">
+                                Shadow AI reveals market demand and can be the foundation for formal governance and standardization.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">3. How satisfied is your team with your current toolset? What gaps exist?</div>
+                            <div class="question-input">
+                                <textarea id="q3-3" placeholder="Tool gaps, pain points, missing functionality..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-3">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-3">
+                                Tool satisfaction and gaps inform whether AI solutions should replace, augment, or integrate with existing systems.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">4. Are your tools well-integrated, or do you manually move data between systems?</div>
+                            <div class="question-input">
+                                <textarea id="q3-4" placeholder="Integration level, manual handoffs, data silos..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-4">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-4">
+                                Integration gaps represent both risks and opportunities for AI-powered workflow automation.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">5. Do you have any APIs or automation (Zapier, Make, etc.) connecting your tools?</div>
+                            <div class="question-input">
+                                <textarea id="q3-5" placeholder="Automation solutions, frequency of use, maintenance burden..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-5">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-5">
+                                Existing automation infrastructure can extend to include AI-powered processes and guardrails.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">6. What's your data governance or security model? Any sensitive content considerations?</div>
+                            <div class="question-input">
+                                <textarea id="q3-6" placeholder="Data classification, access controls, compliance requirements, IP sensitivity..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-6">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-6">
+                                Data governance determines which AI tools are permissible and what guardrails are needed.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">7. Are there IT, security, or compliance policies that limit which tools you can adopt?</div>
+                            <div class="question-input">
+                                <textarea id="q3-7" placeholder="Approved vendor lists, security requirements, privacy policies, compliance rules..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-7">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-7">
+                                Policy constraints shape the feasible AI solution set and approval pathway.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">8. How do you currently handle version control, asset management, and content archiving?</div>
+                            <div class="question-input">
+                                <textarea id="q3-8" placeholder="DAM system, file storage, archiving approach, retrieval process..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-8">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-8">
+                                Asset management maturity affects readiness for AI-powered content generation and knowledge management.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">9. Do you have a knowledge base, internal wiki, or centralized content repository?</div>
+                            <div class="question-input">
+                                <textarea id="q3-9" placeholder="Knowledge management tools, content indexing, accessibility..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-9">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-9">
+                                Knowledge base availability enables AI-powered retrieval-augmented generation (RAG) for branded content.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">10. What's your IT infrastructure and budget for new tools or integrations?</div>
+                            <div class="question-input">
+                                <textarea id="q3-10" placeholder="Infrastructure constraints, tool budget, implementation timeline..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q3-10">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q3-10">
+                                Infrastructure and budget constraints determine implementation scope and tool selection.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 4: AI Readiness Deep Dive -->
+                <div class="phase-section">
+                    <div class="phase-header">
+                        <h3>
+                            <span class="phase-badge">4</span>
+                            Phase 4: AI Readiness Deep Dive
+                        </h3>
+                        <div class="phase-toggle">▶</div>
+                    </div>
+                    <div class="phase-content">
+                        <h4 style="margin-top: var(--spacing-lg); color: var(--navy-mid);">Dimension 1: Strategy & Vision</h4>
+
+                        <div class="question-block">
+                            <div class="question-text">1. How well-defined is your organization's AI strategy? Is it documented and communicated?</div>
+                            <div class="question-input">
+                                <textarea id="q4-1" placeholder="Strategy clarity, documentation level, team alignment..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-1">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-1">
+                                Clear AI strategy enables focused implementation and cross-functional buy-in.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">2. What are the specific, measurable outcomes you hope to achieve with AI?</div>
+                            <div class="question-input">
+                                <textarea id="q4-2" placeholder="Efficiency targets, quality goals, revenue impact, team morale..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-2">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-2">
+                                Measurable outcomes drive prioritization, ROI tracking, and success criteria.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">3. How is leadership committed to supporting AI adoption? What resources are they willing to invest?</div>
+                            <div class="question-input">
+                                <textarea id="q4-3" placeholder="Executive support level, budget commitment, time allocation..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-3">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-3">
+                                Leadership commitment is essential for overcoming adoption barriers and sustaining change.
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: var(--spacing-2xl); color: var(--navy-mid);">Dimension 2: Tools & Infrastructure</h4>
+
+                        <div class="question-block">
+                            <div class="question-text">4. How would you rate your organization's current technology infrastructure readiness for AI?</div>
+                            <div class="question-input">
+                                <textarea id="q4-4" placeholder="Infrastructure capability, integration readiness, scalability..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-4">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-4">
+                                Infrastructure readiness determines implementation complexity and tool selection strategy.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">5. What integration points are most critical for AI tools in your workflows?</div>
+                            <div class="question-input">
+                                <textarea id="q4-5" placeholder="Key integrations, data sources, output requirements..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-5">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-5">
+                                Critical integration points inform tool selection and implementation complexity.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">6. Do you have the technical expertise in-house to implement and maintain AI tools, or will you need external support?</div>
+                            <div class="question-input">
+                                <textarea id="q4-6" placeholder="Internal skill gaps, need for consultants, training requirements..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-6">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-6">
+                                Skill assessment determines training needs and the case for implementation support or managed services.
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: var(--spacing-2xl); color: var(--navy-mid);">Dimension 3: Skills & Training</h4>
+
+                        <div class="question-block">
+                            <div class="question-text">7. How would you rate your team's current AI literacy and comfort with using AI tools?</div>
+                            <div class="question-input">
+                                <textarea id="q4-7" placeholder="Current AI familiarity, confidence levels, variation across team..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-7">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-7">
+                                Current AI literacy informs training approach, change management strategy, and early adopter selection.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">8. What specific skills or training does your team need to effectively use AI tools?</div>
+                            <div class="question-input">
+                                <textarea id="q4-8" placeholder="Prompting skills, workflow changes, new tool features, conceptual understanding..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-8">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-8">
+                                Skill gaps inform training curriculum and change management approach.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">9. How would your team respond to a structured training program on AI? What format would work best?</div>
+                            <div class="question-input">
+                                <textarea id="q4-9" placeholder="Learning preferences, time availability, format preferences (live, self-paced, etc.)..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-9">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-9">
+                                Training preferences ensure adoption program resonates with team culture and learning styles.
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: var(--spacing-2xl); color: var(--navy-mid);">Dimension 4: Governance & Risk</h4>
+
+                        <div class="question-block">
+                            <div class="question-text">10. Does your organization have any current AI governance policies or use guidelines?</div>
+                            <div class="question-input">
+                                <textarea id="q4-10" placeholder="Existing policies, guidelines, oversight mechanisms..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-10">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-10">
+                                Existing governance provides a foundation for expanded AI policy and risk management.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">11. What are your primary concerns regarding AI risks (bias, accuracy, data privacy, liability)?</div>
+                            <div class="question-input">
+                                <textarea id="q4-11" placeholder="Risk concerns, potential mitigation approaches, priority areas..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-11">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-11">
+                                Risk concerns drive governance requirements, tool selection, and implementation safeguards.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">12. Who should own AI governance and decision-making—Marketing, IT, Legal, Executive leadership?</div>
+                            <div class="question-input">
+                                <textarea id="q4-12" placeholder="Governance structure, ownership, decision authority..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-12">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-12">
+                                Clear governance ownership ensures accountability and alignment with organizational values.
+                            </div>
+                        </div>
+
+                        <h4 style="margin-top: var(--spacing-2xl); color: var(--navy-mid);">Dimension 5: Change Management & Culture</h4>
+
+                        <div class="question-block">
+                            <div class="question-text">13. How does your organization typically respond to major process or technology changes?</div>
+                            <div class="question-input">
+                                <textarea id="q4-13" placeholder="Adoption patterns, early adopters, resistors, change fatigue..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-13">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-13">
+                                Past change patterns inform change management strategy and implementation sequencing.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">14. What concerns about job displacement or team morale exist around AI adoption?</div>
+                            <div class="question-input">
+                                <textarea id="q4-14" placeholder="Job security concerns, role changes, skill evolution, morale impacts..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-14">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-14">
+                                Addressing these concerns early prevents implementation barriers and supports adoption.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">15. How can we frame AI adoption as an opportunity for your team to do more strategic work?</div>
+                            <div class="question-input">
+                                <textarea id="q4-15" placeholder="Shift in roles, strategic focus areas, professional development opportunities..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q4-15">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q4-15">
+                                Reframing AI as an opportunity maximizes engagement and supports a positive adoption narrative.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 5: Prioritization & Roadmap -->
+                <div class="phase-section">
+                    <div class="phase-header">
+                        <h3>
+                            <span class="phase-badge">5</span>
+                            Phase 5: Prioritization & Roadmap
+                        </h3>
+                        <div class="phase-toggle">▶</div>
+                    </div>
+                    <div class="phase-content">
+                        <div class="question-block">
+                            <div class="question-text">1. Which content type or workflow would have the highest ROI with AI implementation?</div>
+                            <div class="question-input">
+                                <textarea id="q5-1" placeholder="Workflow, expected ROI, impact, timeline..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-1">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-1">
+                                ROI assessment drives prioritization of first-phase implementations and resource allocation.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">2. What's your timeline for implementing AI solutions? Do you prefer a sprint or phased approach?</div>
+                            <div class="question-input">
+                                <textarea id="q5-2" placeholder="Timeline preferences, sprint vs. phased, quick wins vs. comprehensive..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-2">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-2">
+                                Timeline and approach preferences determine roadmap structure and sprint scope.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">3. Are there any quick wins or low-hanging fruit we should tackle first to build momentum?</div>
+                            <div class="question-input">
+                                <textarea id="q5-3" placeholder="Quick win candidates, effort required, visible impact..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-3">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-3">
+                                Quick wins build credibility and momentum for broader AI adoption initiatives.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">4. What metrics or milestones would define success for your first AI project?</div>
+                            <div class="question-input">
+                                <textarea id="q5-4" placeholder="Success metrics, KPIs, measurable outcomes..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-4">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-4">
+                                Clear success metrics enable objective evaluation and course correction during implementation.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">5. Beyond the initial sprint, what's your vision for AI transformation over 6-12 months?</div>
+                            <div class="question-input">
+                                <textarea id="q5-5" placeholder="Broader vision, integration across teams, cultural shifts..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-5">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-5">
+                                Longer-term vision ensures roadmap aligns with strategic goals beyond the first project.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">6. What dependencies, blockers, or prerequisites need to be addressed before moving forward?</div>
+                            <div class="question-input">
+                                <textarea id="q5-6" placeholder="Blockers, prerequisites, resource gaps, approvals needed..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-6">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-6">
+                                Identifying blockers upfront enables proactive mitigation and realistic timelines.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">7. Who should be the champion or executive sponsor for this AI initiative?</div>
+                            <div class="question-input">
+                                <textarea id="q5-7" placeholder="Sponsor role, authority, commitment level..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-7">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-7">
+                                Executive sponsorship is critical for overcoming resistance and securing necessary resources.
+                            </div>
+                        </div>
+
+                        <div class="question-block">
+                            <div class="question-text">8. What's your next step after this diagnostic? (Sprint with Vernon, internal planning, proposal review, etc.)</div>
+                            <div class="question-input">
+                                <textarea id="q5-8" placeholder="Next actions, timing, responsibilities..."></textarea>
+                            </div>
+                            <button class="insight-toggle" data-insight="q5-8">
+                                <span class="insight-icon">▼</span>
+                                Show insight
+                            </button>
+                            <div class="insight-content" data-insight="q5-8">
+                                Clear next steps ensure momentum and accountability following the diagnostic.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="form-group">
+                    <h3>Additional Observations & Notes</h3>
+                    <p style="margin-bottom: var(--spacing-md); color: var(--text-muted);">Any additional observations, context, or notes from the diagnostic session that don't fit the structured questions above.</p>
+                    <textarea id="additionalNotes" placeholder="Vernon's observations, surprises, patterns, opportunities..."></textarea>
+                </div>
+            </div>
+
+            <!-- TRANSCRIPT MODE -->
+            <div id="transcript-mode" class="tab-content">
+                <div class="form-group">
+                    <h3>Upload Session Transcript</h3>
+                    <p style="margin-bottom: var(--spacing-lg); color: var(--text-muted);">Paste or upload a transcript from the recorded diagnostic session. The tool will extract answers to diagnostic questions automatically.</p>
+
+                    <!-- Upload Area -->
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Drop transcript file here or click to upload</div>
+                        <div class="upload-subtext">Supports .txt, .vtt, .srt files or paste text directly</div>
+                        <input type="file" id="fileInput" accept=".txt,.vtt,.srt">
+                    </div>
+
+                    <!-- Or Paste Section -->
+                    <div style="margin-bottom: var(--spacing-lg);">
+                        <h4 style="margin-bottom: var(--spacing-md);">Or paste transcript directly:</h4>
+                        <textarea id="transcriptPaste" placeholder="Paste the full transcript from the session here..." style="min-height: 300px;"></textarea>
+                    </div>
+
+                    <!-- Process Button -->
+                    <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="processTranscriptBtn">
+                            <span id="processBtnText">Process Transcript</span>
+                            <span id="processBtnLoader" class="loading hidden" style="margin-left: var(--spacing-sm);"></span>
+                        </button>
+                        <button class="btn btn-outline" id="clearTranscriptBtn">Clear</button>
+                    </div>
+                </div>
+
+                <!-- Processing Message -->
+                <div id="transcriptMessage" class="hidden" style="margin-top: var(--spacing-lg);"></div>
+
+                <!-- Extracted Answers Preview (populated after processing) -->
+                <div id="extractedAnswers" class="hidden" style="margin-top: var(--spacing-2xl);">
+                    <h3>Extracted Answers - Review & Edit</h3>
+                    <p style="color: var(--text-muted); margin-bottom: var(--spacing-lg);">Below are the answers extracted from the transcript. Review and edit as needed before generating the report.</p>
+                    <div id="extractedPreview"></div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-2xl); flex-wrap: wrap; border-top: 2px solid var(--border-light); padding-top: var(--spacing-2xl);">
+                <button class="btn btn-primary" id="generateReportBtn">Generate Report</button>
+                <button class="btn btn-secondary" id="saveDraftBtn">Save Draft</button>
+                <button class="btn btn-outline" id="loadDraftBtn">Load Draft</button>
+                <button class="btn btn-ghost" id="clearAllBtn">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Overlay -->
+    <div id="reportOverlay" class="report-overlay">
+        <div class="report-container">
+            <div class="report-actions">
+                <h3 style="margin: 0;">AI Readiness Diagnostic Report</h3>
+                <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+                    <button class="btn btn-secondary btn-sm" id="printReportBtn">Print / Export PDF</button>
+                    <button class="btn btn-outline btn-sm" id="closeReportBtn">Close</button>
+                </div>
+            </div>
+            <div class="report-content" id="reportContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE MANAGEMENT & LOCALSTORAGE
+        // ============================================================
+        const formState = {};
+        const STORAGE_KEY = 'aiDiagnosticDraft';
+
+        function saveFormState() {
+            const allInputs = document.querySelectorAll('input, textarea');
+            allInputs.forEach(input => {
+                if (input.id) {
+                    formState[input.id] = input.value;
+                }
+            });
+            return formState;
+        }
+
+        function getFormState() {
+            return formState;
+        }
+
+        function saveDraftToStorage() {
+            saveFormState();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formState));
+            showMessage('Draft saved successfully!', 'success-message');
+        }
+
+        function loadDraftFromStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.keys(data).forEach(id => {
+                    const input = document.getElementById(id);
+                    if (input) {
+                        input.value = data[id];
+                    }
+                });
+                Object.assign(formState, data);
+                showMessage('Draft loaded successfully!', 'success-message');
+            } else {
+                showMessage('No draft found. Start fresh or upload a transcript.', 'warning-message');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
+                document.querySelectorAll('input, textarea').forEach(input => {
+                    input.value = '';
+                });
+                localStorage.removeItem(STORAGE_KEY);
+                Object.keys(formState).forEach(key => delete formState[key]);
+                showMessage('All data cleared.', 'success-message');
+            }
+        }
+
+        // ============================================================
+        // UI INTERACTIONS
+        // ============================================================
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Collapsible sections
+        document.querySelectorAll('.phase-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.closest('.phase-section');
+                section.classList.toggle('collapsed');
+            });
+        });
+
+        // Insight toggles
+        document.querySelectorAll('.insight-toggle').forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                const insightId = toggle.dataset.insight;
+                toggle.classList.toggle('open');
+                document.querySelector(`.insight-content[data-insight="${insightId}"]`).classList.toggle('open');
+            });
+        });
+
+        // URL params for scorecard pre-fill
+        function prefillFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const scoreMap = {
+                'score': 'scorecardScore',
+                'strategy': 'scorecardStrategy',
+                'tools': 'scorecardTools',
+                'skills': 'scorecardSkills',
+                'content': 'scorecardContent',
+                'governance': 'scorecardGovernance'
+            };
+
+            Object.keys(scoreMap).forEach(urlParam => {
+                const value = params.get(urlParam);
+                if (value) {
+                    // Create input if it doesn't exist
+                    let input = document.getElementById(scoreMap[urlParam]);
+                    if (!input && urlParam !== 'score') {
+                        // Create hidden inputs for scorecard dimensions
+                        input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.id = scoreMap[urlParam];
+                        document.body.appendChild(input);
+                    }
+                    if (input) {
+                        input.value = value;
+                    }
+                }
+            });
+        }
+
+        // Set today's date as default
+        document.getElementById('contactDate').valueAsDate = new Date();
+
+        // ============================================================
+        // TRANSCRIPT PROCESSING
+        // ============================================================
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const transcriptPaste = document.getElementById('transcriptPaste');
+        const processBtn = document.getElementById('processTranscriptBtn');
+        const clearTranscriptBtn = document.getElementById('clearTranscriptBtn');
+
+        // Drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                transcriptPaste.value = e.target.result;
+                processBtn.click();
+            };
+            reader.readAsText(file);
+        }
+
+        // Process transcript
+        processBtn.addEventListener('click', async () => {
+            const transcript = transcriptPaste.value.trim();
+            if (!transcript) {
+                showMessage('Please enter or upload a transcript.', 'warning-message');
+                return;
+            }
+
+            setProcessing(true);
+
+            try {
+                const response = await fetch('/api/process-transcript', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        transcript,
+                        questions: getAllQuestions()
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.answers) {
+                    populateAnswersFromTranscript(data.answers);
+                    showMessage('Transcript processed successfully! Review and edit answers below.', 'success-message');
+                    document.getElementById('extractedAnswers').classList.remove('hidden');
+                    document.getElementById('extractedAnswers').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    throw new Error('No answers returned from API');
+                }
+            } catch (error) {
+                console.error('Transcript processing error:', error);
+                showMessage(`Error processing transcript: ${error.message}. Please review and manually enter answers.`, 'warning-message');
+            } finally {
+                setProcessing(false);
+            }
+        });
+
+        clearTranscriptBtn.addEventListener('click', () => {
+            transcriptPaste.value = '';
+            document.getElementById('extractedAnswers').classList.add('hidden');
+            document.getElementById('transcriptMessage').classList.add('hidden');
+        });
+
+        function setProcessing(isProcessing) {
+            const btnText = document.getElementById('processBtnText');
+            const loader = document.getElementById('processBtnLoader');
+            const btn = document.getElementById('processTranscriptBtn');
+
+            if (isProcessing) {
+                btnText.textContent = 'Processing...';
+                loader.classList.remove('hidden');
+                btn.disabled = true;
+            } else {
+                btnText.textContent = 'Process Transcript';
+                loader.classList.add('hidden');
+                btn.disabled = false;
+            }
+        }
+
+        function getAllQuestions() {
+            const questions = [];
+            for (let phase = 1; phase <= 5; phase++) {
+                for (let q = 1; q <= 20; q++) {
+                    const id = `q${phase}-${q}`;
+                    const elem = document.getElementById(id);
+                    if (elem) {
+                        const text = elem.previousElementSibling?.textContent || '';
+                        questions.push({ id, text });
+                    }
+                }
+            }
+            return questions;
+        }
+
+        function populateAnswersFromTranscript(answers) {
+            Object.keys(answers).forEach(questionId => {
+                const input = document.getElementById(questionId);
+                if (input) {
+                    input.value = answers[questionId];
+                    formState[questionId] = answers[questionId];
+                }
+            });
+        }
+
+        // ============================================================
+        // REPORT GENERATION
+        // ============================================================
+        document.getElementById('generateReportBtn').addEventListener('click', () => {
+            saveFormState();
+            const report = generateReport(formState);
+            document.getElementById('reportContent').innerHTML = report;
+            document.getElementById('reportOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        document.getElementById('closeReportBtn').addEventListener('click', () => {
+            document.getElementById('reportOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        });
+
+        document.getElementById('printReportBtn').addEventListener('click', () => {
+            window.print();
+        });
+
+        // Draft management
+        document.getElementById('saveDraftBtn').addEventListener('click', saveDraftToStorage);
+        document.getElementById('loadDraftBtn').addEventListener('click', loadDraftFromStorage);
+        document.getElementById('clearAllBtn').addEventListener('click', clearAllData);
+
+        // ============================================================
+        // REPORT GENERATION LOGIC
+        // ============================================================
+        function generateReport(state) {
+            const clientName = state.companyName || 'Client';
+            const contactName = `${state.contactFirstName || ''} ${state.contactLastName || ''}`.trim();
+            const diagnosticDate = state.contactDate || new Date().toISOString().split('T')[0];
+
+            // Parse scorecard scores
+            const scores = {
+                strategy: parseInt(state.scorecardStrategy) || 0,
+                tools: parseInt(state.scorecardTools) || 0,
+                skills: parseInt(state.scorecardSkills) || 0,
+                content: parseInt(state.scorecardContent) || 0,
+                governance: parseInt(state.scorecardGovernance) || 0
+            };
+
+            // Calculate dimensions from answers (algorithmic scoring)
+            const dimensions = calculateDimensions(state, scores);
+
+            // Generate findings
+            const findings = generateFindings(state);
+
+            // Generate recommendations
+            const recommendations = generateRecommendations(state, findings);
+
+            // Generate friction map
+            const frictionMap = generateFrictionMap(state);
+
+            let html = `
+                <div class="report-section report-cover">
+                    <h1>AI Readiness Diagnostic Report</h1>
+                    <p class="meta">Confidential</p>
+                    <p class="meta">${clientName}</p>
+                    <p class="meta">Diagnostic Date: ${formatDate(diagnosticDate)}</p>
+                </div>
+
+                <div class="report-section">
+                    <h2>Executive Summary</h2>
+                    <p><strong>Organization:</strong> ${clientName}</p>
+                    <p><strong>Contact:</strong> ${contactName}</p>
+                    <p><strong>Team Size:</strong> ${state.teamSize || 'Not specified'} people</p>
+                    <p><strong>Monthly Content Volume:</strong> ${state.contentVolume || 'Not specified'} pieces</p>
+
+                    <div style="margin-top: var(--spacing-lg); padding: var(--spacing-lg); background: #f0f7ff; border-radius: 6px;">
+                        <h3>Overall Assessment</h3>
+                        <p>${generateExecutiveSummary(state, dimensions)}</p>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h2>AI Readiness Assessment</h2>
+                    <p>The organization was assessed across 5 key dimensions of AI readiness:</p>
+
+                    <div class="dimension-score">
+                        ${Object.keys(dimensions).map(dim => `
+                            <div class="dimension-card">
+                                <div class="dimension-name">${capitalizeFirst(dim)}</div>
+                                <div class="dimension-score-number">${dimensions[dim].score}</div>
+                                <div class="dimension-insight">${dimensions[dim].insight}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div style="margin-top: var(--spacing-xl);">
+                        <h3>Key Findings by Dimension</h3>
+                        ${Object.keys(dimensions).map(dim => `
+                            <div class="finding">
+                                <strong>${capitalizeFirst(dim)}:</strong> ${dimensions[dim].finding}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h2>Organization Profile</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Details</th>
+                            </tr>
+                            <tr>
+                                <td>Company</td>
+                                <td>${clientName}</td>
+                            </tr>
+                            <tr>
+                                <td>Team Size</td>
+                                <td>${state.teamSize || 'Not specified'} people</td>
+                            </tr>
+                            <tr>
+                                <td>Monthly Content Volume</td>
+                                <td>${state.contentVolume || 'Not specified'} pieces</td>
+                            </tr>
+                            <tr>
+                                <td>Primary Audiences</td>
+                                <td>${extractBulletPoints(state.q1_4) || 'Not specified'}</td>
+                            </tr>
+                            <tr>
+                                <td>Current Content Process Cycle</td>
+                                <td>${extractBulletPoints(state.q1_5) || 'Not specified'}</td>
+                            </tr>
+                            <tr>
+                                <td>Key Stakeholders</td>
+                                <td>${extractBulletPoints(state.q1_6) || 'Not specified'}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h2>Workflow Friction Map</h2>
+                    <p>The following table identifies key bottlenecks in current workflows and the AI opportunities to address them:</p>
+                    <div class="table-responsive">
+                        <table>
+                            <tr>
+                                <th>Workflow</th>
+                                <th>Bottleneck</th>
+                                <th>Impact</th>
+                                <th>AI Opportunity</th>
+                            </tr>
+                            ${frictionMap.map(item => `
+                                <tr>
+                                    <td>${item.workflow}</td>
+                                    <td>${item.bottleneck}</td>
+                                    <td>${item.impact}</td>
+                                    <td>${item.opportunity}</td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h2>Technology Landscape</h2>
+                    <div class="form-group">
+                        <h3>Current Tools & Systems</h3>
+                        <p>${state.q3_1 || 'Not specified'}</p>
+                    </div>
+                    <div class="form-group">
+                        <h3>Shadow AI Usage</h3>
+                        <p>${state.q3_2 || 'No informal AI tools reported'}</p>
+                    </div>
+                    <div class="form-group">
+                        <h3>Tool Gaps & Integration Challenges</h3>
+                        <p>${state.q3_3 || 'Not specified'}</p>
+                    </div>
+                </div>
+
+                <div class="report-section">
+                    <h2>Priority Recommendations</h2>
+                    <p>Based on the diagnostic assessment, the following recommendations are prioritized by impact and feasibility:</p>
+                    ${recommendations.map((rec, i) => `
+                        <div class="recommendation">
+                            <div class="recommendation-title">${i + 1}. ${rec.title}</div>
+                            <div class="recommendation-desc">${rec.description}</div>
+                            <div>
+                                <span class="recommendation-impact">${rec.impact} IMPACT</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="report-section">
+                    <h2>Sprint Scope Recommendation</h2>
+                    <div style="background: var(--bg-light); padding: var(--spacing-lg); border-radius: 6px; margin-bottom: var(--spacing-lg);">
+                        <h3 style="margin-top: 0;">Recommended First 30-60 Day Sprint</h3>
+                        <p><strong>Focus:</strong> ${state.q5_1 || 'Email workflow optimization and content repurposing'}</p>
+                        <p><strong>Scope:</strong> 1-2 core workflows with highest ROI potential</p>
+                        <p><strong>Expected Outcomes:</strong></p>
+                        <ul style="margin-left: var(--spacing-lg); color: var(--text-muted);">
+                            <li>25-40% reduction in content creation time</li>
+                            <li>Improved content consistency and quality</li>
+                            <li>Increased team confidence and AI literacy</li>
+                            <li>Clear metrics and ROI demonstration for stakeholders</li>
+                        </ul>
+                    </div>
+                </div>
+
+                ${scores.strategy > 0 ? `
+                    <div class="report-section">
+                        <h2>Baseline Scores (from Scorecard Assessment)</h2>
+                        <div class="dimension-score">
+                            <div class="dimension-card">
+                                <div class="dimension-name">Overall</div>
+                                <div class="dimension-score-number">${Math.round((scores.strategy + scores.tools + scores.skills + scores.content + scores.governance) / 5)}</div>
+                            </div>
+                            ${Object.keys(scores).map(key => scores[key] > 0 ? `
+                                <div class="dimension-card">
+                                    <div class="dimension-name">${capitalizeFirst(key)}</div>
+                                    <div class="dimension-score-number">${scores[key]}</div>
+                                </div>
+                            ` : '').join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div class="report-section">
+                    <h2>Appendix</h2>
+                    <p><strong>Assessment Date:</strong> ${formatDate(diagnosticDate)}</p>
+                    <p><strong>Assessed By:</strong> Vernon Ross</p>
+                    <p><strong>Methodology:</strong> Comprehensive AI Readiness Diagnostic covering 5 phases: Context & Discovery, Workflow Mapping, Technology Audit, AI Readiness Deep Dive, and Prioritization & Roadmap.</p>
+                </div>
+            `;
+
+            return html;
+        }
+
+        // Helper functions for report generation
+        function calculateDimensions(state, scores) {
+            return {
+                strategy: {
+                    score: calculateStrategyScore(state, scores),
+                    insight: 'Vision and organizational alignment',
+                    finding: getStrategyFinding(state)
+                },
+                tools: {
+                    score: calculateToolsScore(state, scores),
+                    insight: 'Technology and infrastructure',
+                    finding: getToolsFinding(state)
+                },
+                skills: {
+                    score: calculateSkillsScore(state, scores),
+                    insight: 'Team capability and readiness',
+                    finding: getSkillsFinding(state)
+                },
+                governance: {
+                    score: calculateGovernanceScore(state, scores),
+                    insight: 'Risk management and compliance',
+                    finding: getGovernanceFinding(state)
+                },
+                culture: {
+                    score: calculateCultureScore(state, scores),
+                    insight: 'Organizational adoption readiness',
+                    finding: getCultureFinding(state)
+                }
+            };
+        }
+
+        function calculateStrategyScore(state, scores) {
+            let score = scores.strategy || 0;
+            if (state.q4_1) score += 5;
+            if (state.q4_2) score += 5;
+            if (state.q4_3) score += 5;
+            return Math.min(100, Math.max(0, Math.round(score)));
+        }
+
+        function calculateToolsScore(state, scores) {
+            let score = scores.tools || 0;
+            if (state.q3_1 && state.q3_1.length > 20) score += 10;
+            if (state.q3_4 && state.q3_4.includes('integrated')) score += 10;
+            if (state.q4_4) score += 5;
+            return Math.min(100, Math.max(0, Math.round(score)));
+        }
+
+        function calculateSkillsScore(state, scores) {
+            let score = scores.skills || 0;
+            if (state.q4_7) score += 5;
+            if (state.q4_8) score += 5;
+            if (state.q4_9) score += 5;
+            return Math.min(100, Math.max(0, Math.round(score)));
+        }
+
+        function calculateGovernanceScore(state, scores) {
+            let score = scores.governance || 0;
+            if (state.q1_14 && state.q1_14.length > 10) score += 5;
+            if (state.q4_10) score += 5;
+            if (state.q4_11) score += 5;
+            if (state.q4_12) score += 5;
+            return Math.min(100, Math.max(0, Math.round(score)));
+        }
+
+        function calculateCultureScore(state, scores) {
+            let score = 50;
+            if (state.q4_13 && !state.q4_13.toLowerCase().includes('resistant')) score += 15;
+            if (state.q4_14 && !state.q4_14.toLowerCase().includes('displacement')) score += 15;
+            if (state.q1_12 && state.q1_12.toLowerCase().includes('aligned')) score += 10;
+            return Math.min(100, Math.max(0, Math.round(score)));
+        }
+
+        function getStrategyFinding(state) {
+            if (!state.q4_1) return 'AI strategy clarity needs definition.';
+            if (state.q4_1.toLowerCase().includes('comprehensive')) return 'Well-defined AI strategy with clear organizational alignment.';
+            if (state.q4_1.toLowerCase().includes('developing')) return 'AI strategy is developing but needs stronger communication.';
+            return 'AI strategy exists but clarity and alignment could be improved.';
+        }
+
+        function getToolsFinding(state) {
+            if (state.q3_3 && state.q3_3.toLowerCase().includes('gaps')) return 'Significant tool gaps identified; AI solutions should address integration needs.';
+            if (state.q3_4 && state.q3_4.toLowerCase().includes('integrated')) return 'Strong tool integration creates a foundation for AI implementation.';
+            return 'Tool ecosystem is functional but integration opportunities exist.';
+        }
+
+        function getSkillsFinding(state) {
+            if (state.q4_7 && state.q4_7.toLowerCase().includes('high')) return 'Team has strong AI literacy; rapid adoption potential.';
+            if (state.q4_7 && state.q4_7.toLowerCase().includes('low')) return 'Team AI literacy is developing; structured training will be essential.';
+            return 'Team has mixed AI experience; targeted training recommended.';
+        }
+
+        function getGovernanceFinding(state) {
+            if (state.q1_14 && state.q1_14.toLowerCase().includes('comprehensive')) return 'Strong governance framework in place; AI governance can build on existing structure.';
+            if (!state.q4_10 || state.q4_10.toLowerCase().includes('none')) return 'No formal AI governance exists; governance policy development is priority #1.';
+            return 'Governance framework exists but may need expansion for AI use cases.';
+        }
+
+        function getCultureFinding(state) {
+            if (state.q4_13 && state.q4_13.toLowerCase().includes('embrace')) return 'Organization demonstrates strong change agility and adoption capability.';
+            if (state.q4_14 && state.q4_14.toLowerCase().includes('significant')) return 'Job security concerns require proactive change management strategy.';
+            return 'Organization has moderate adoption readiness; structured change management recommended.';
+        }
+
+        function generateExecutiveSummary(state, dimensions) {
+            const avgScore = Math.round(
+                (dimensions.strategy.score + dimensions.tools.score + dimensions.skills.score +
+                 dimensions.governance.score + dimensions.culture.score) / 5
+            );
+
+            let maturityLevel = 'Early Stage';
+            if (avgScore >= 70) maturityLevel = 'Mature';
+            else if (avgScore >= 50) maturityLevel = 'Developing';
+
+            return `
+                <strong>${state.companyName}</strong> demonstrates <strong>${maturityLevel}</strong> AI readiness
+                (overall score: <strong>${avgScore}/100</strong>). The organization has clear AI opportunities across
+                content creation and workflow optimization. Key priorities include
+                ${getTopPriorities(state, dimensions)}
+                followed by structured implementation of AI-enabled workflows for quick ROI demonstration.
+            `;
+        }
+
+        function getTopPriorities(state, dimensions) {
+            const priorities = [];
+            if (dimensions.governance.score < 50) priorities.push('AI governance framework development');
+            if (dimensions.skills.score < 50) priorities.push('team training and capability building');
+            if (dimensions.tools.score < 50) priorities.push('technology integration and tool selection');
+            return priorities.length > 0 ? priorities.join(', ') : 'organizational alignment and team engagement';
+        }
+
+        function generateFindings(state) {
+            return [
+                { title: 'Content Bottlenecks', content: state.q1_3 || 'Multiple workflow delays identified' },
+                { title: 'Current AI Adoption', content: state.q1_2 || 'Limited formal AI adoption at this time' },
+                { title: 'Tool Gaps', content: state.q3_3 || 'Integration and workflow gaps noted' }
+            ];
+        }
+
+        function generateRecommendations(state, findings) {
+            const recs = [];
+
+            // Recommendation 1: Governance
+            if (!state.q4_10 || state.q4_10.toLowerCase().includes('none')) {
+                recs.push({
+                    title: 'Establish AI Governance Framework',
+                    description: 'Develop clear policies, risk mitigation, and oversight mechanisms for responsible AI use in communications.',
+                    impact: 'HIGH'
+                });
+            }
+
+            // Recommendation 2: Quick Win
+            recs.push({
+                title: 'Implement AI in Priority Workflow',
+                description: `Focus on ${state.q5_1 || 'your highest-ROI workflow'} with AI-assisted tools to demonstrate value, build team confidence, and establish baseline metrics.`,
+                impact: 'HIGH'
+            });
+
+            // Recommendation 3: Training
+            if (state.q4_7 && state.q4_7.toLowerCase().includes('low')) {
+                recs.push({
+                    title: 'Launch Comprehensive AI Training Program',
+                    description: 'Equip team with prompt engineering, workflow adaptation, and governance skills through structured learning.',
+                    impact: 'MEDIUM'
+                });
+            } else {
+                recs.push({
+                    title: 'AI Literacy and Advanced Skills Training',
+                    description: 'Expand team AI capabilities from basic usage to strategic workflow design and optimization.',
+                    impact: 'MEDIUM'
+                });
+            }
+
+            // Recommendation 4: Integration
+            recs.push({
+                title: 'Integrate AI Tools with Existing Martech Stack',
+                description: 'Connect AI-powered tools with your CMS, email, analytics, and collaboration platforms for seamless workflows.',
+                impact: 'MEDIUM'
+            });
+
+            // Recommendation 5: Knowledge Management
+            if (state.q3_9) {
+                recs.push({
+                    title: 'Build Brand Knowledge Base for AI',
+                    description: 'Create a centralized, AI-indexed knowledge base of brand voice, guidelines, and content assets for consistent AI-generated output.',
+                    impact: 'MEDIUM'
+                });
+            }
+
+            // Recommendation 6: Change Management
+            if (state.q4_14 && state.q4_14.length > 0) {
+                recs.push({
+                    title: 'Develop Change Management & Adoption Strategy',
+                    description: 'Address team concerns, frame AI as an opportunity for strategic work, and establish executive sponsorship.',
+                    impact: 'HIGH'
+                });
+            }
+
+            return recs.slice(0, 7);
+        }
+
+        function generateFrictionMap(state) {
+            const map = [];
+
+            if (state.q2_2) {
+                map.push({
+                    workflow: 'Content Creation',
+                    bottleneck: state.q2_2.substring(0, 50) + '...',
+                    impact: 'Delayed time-to-publish',
+                    opportunity: 'AI-assisted drafting and editing'
+                });
+            }
+
+            if (state.q1_3) {
+                map.push({
+                    workflow: 'Workflow',
+                    bottleneck: state.q1_3.substring(0, 50) + '...',
+                    impact: 'Resource constraint',
+                    opportunity: 'Workflow automation and task reduction'
+                });
+            }
+
+            if (state.q2_7) {
+                map.push({
+                    workflow: 'Approval Process',
+                    bottleneck: 'Handoff delays and communication gaps',
+                    impact: 'Extended cycle time',
+                    opportunity: 'AI-powered summary and insight generation'
+                });
+            }
+
+            if (state.q2_8) {
+                map.push({
+                    workflow: 'Content Repurposing',
+                    bottleneck: 'Manual format adaptation across channels',
+                    impact: 'Low content ROI',
+                    opportunity: 'AI-powered multi-format content generation'
+                });
+            }
+
+            if (map.length === 0) {
+                map.push({
+                    workflow: 'General Content Workflows',
+                    bottleneck: 'Time-intensive manual processes',
+                    impact: 'Limited team capacity',
+                    opportunity: 'AI-assisted content creation and optimization'
+                });
+            }
+
+            return map;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            return new Date(dateStr).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function extractBulletPoints(text) {
+            if (!text) return '';
+            return text.substring(0, 100) + (text.length > 100 ? '...' : '');
+        }
+
+        // ============================================================
+        // MESSAGING
+        // ============================================================
+        function showMessage(message, className) {
+            const msgDiv = document.getElementById('transcriptMessage');
+            if (!msgDiv) return;
+
+            msgDiv.textContent = message;
+            msgDiv.className = className;
+            msgDiv.classList.remove('hidden');
+
+            if (className === 'success-message') {
+                setTimeout(() => msgDiv.classList.add('hidden'), 4000);
+            }
+        }
+
+        // ============================================================
+        // INITIALIZATION
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            prefillFromUrl();
+        });
+    </script>
+</body>
+</html>
