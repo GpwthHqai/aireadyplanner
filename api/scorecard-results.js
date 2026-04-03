@@ -214,11 +214,8 @@ async function sendResendEmail(payload) {
           <div style="white-space: pre-line; color: #6B7280; font-size: 14px;">${insights}</div>
         </div>
 
-        <div style="text-align: center; padding-top: 16px;">
-          <a href="https://bookme.name/vernon/lite/ai-readiness-diagnostic-discovery-call"
-             style="display: inline-block; background: #D4AF55; color: #0A1628; padding: 12px 32px; border-radius: 6px; text-decoration: none; font-weight: 600;">
-            View in GHL
-          </a>
+        <div style="text-align: center; padding-top: 16px; color: #6B7280; font-size: 14px;">
+          Check Lead Connector for full contact details and to trigger follow-up.
         </div>
       </div>
     </div>
