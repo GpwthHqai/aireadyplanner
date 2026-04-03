@@ -893,10 +893,42 @@
 
             .scale-options {
                 grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+
+            .scale-option {
+                padding: 10px 4px;
+            }
+
+            .scale-number {
+                font-size: 16px;
+            }
+
+            .scale-label {
+                font-size: 9px;
+                line-height: 1.2;
             }
 
             .dimensions-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .rings-container {
+                gap: 16px;
+                padding: 20px 12px;
+            }
+
+            .ring-item {
+                width: 100px;
+            }
+
+            .ring-svg {
+                width: 90px;
+                height: 90px;
+            }
+
+            .ring-label {
+                font-size: 11px;
             }
 
             .priority-actions {
@@ -917,32 +949,49 @@
             }
 
             .content {
-                padding: 40px 20px;
+                padding: 40px 16px;
             }
 
             .header {
-                padding: 30px 20px 20px;
+                padding: 30px 16px 20px;
             }
 
             .welcome-screen h1 {
-                font-size: 32px;
-            }
-
-            .category-name {
-                font-size: 24px;
-            }
-
-            .results-header h1 {
                 font-size: 28px;
             }
 
-            .priority-title {
+            .category-name {
                 font-size: 22px;
+            }
+
+            .results-header h1 {
+                font-size: 24px;
+            }
+
+            .gauge-container {
+                padding: 20px;
+            }
+
+            .email-gate-section {
+                padding: 30px 20px;
             }
 
             .email-gate-title {
                 font-size: 22px;
             }
+
+            .cta-section {
+                padding: 30px 20px;
+            }
+
+            .cta-section h3 {
+                font-size: 22px;
+            }
+
+            .priority-section {
+                padding: 24px 16px;
+            }
+
         }
     </style>
 </head>
@@ -1585,6 +1634,9 @@
         function animateCounter(el, target, duration) {
             const start = 0;
             const startTime = Date.now();
+
+            // Guarantee final value displays even if RAF is throttled
+            setTimeout(() => { el.textContent = target; }, duration + 100);
 
             const update = () => {
                 const elapsed = Date.now() - startTime;
