@@ -448,20 +448,42 @@
             color: #312e81;
         }
 
-        /* RADAR CHART */
-        .radar-container {
+        /* DIMENSION RINGS */
+        .rings-container {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
+            gap: 24px;
             margin-bottom: 50px;
             padding: 30px;
             background: var(--light-gray);
             border-radius: 12px;
         }
 
-        .radar {
-            width: 100%;
-            max-width: 400px;
-            aspect-ratio: 1;
+        .ring-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 130px;
+        }
+
+        .ring-svg {
+            width: 110px;
+            height: 110px;
+        }
+
+        .ring-score {
+            font-size: 22px;
+            font-weight: 800;
+            fill: #0A1628;
+        }
+
+        .ring-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-top: 8px;
+            text-align: center;
         }
 
         /* DIMENSIONS GRID */
@@ -837,7 +859,7 @@
                 break-inside: avoid;
             }
 
-            .radar-container {
+            .rings-container {
                 break-inside: avoid;
             }
 
@@ -941,7 +963,7 @@
 
                 <div class="welcome-benefits">
                     <div class="benefit">
-                        <strong>20 Expert Questions</strong>
+                        <strong>22 Expert Questions</strong>
                         Covering all critical dimensions of AI readiness
                     </div>
                     <div class="benefit">
@@ -1021,41 +1043,8 @@
                     </div>
                 </div>
 
-                <!-- RADAR CHART -->
-                <div class="radar-container">
-                    <svg class="radar" viewBox="0 0 400 400" id="radarChart">
-                        <defs>
-                            <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#D4AF55;stop-opacity:0.3" />
-                                <stop offset="100%" style="stop-color:#D4AF55;stop-opacity:0.1" />
-                            </linearGradient>
-                        </defs>
-
-                        <!-- Background grid -->
-                        <circle cx="200" cy="200" r="30" fill="none" stroke="#e9ecef" stroke-width="1"/>
-                        <circle cx="200" cy="200" r="60" fill="none" stroke="#e9ecef" stroke-width="1"/>
-                        <circle cx="200" cy="200" r="90" fill="none" stroke="#e9ecef" stroke-width="1"/>
-                        <circle cx="200" cy="200" r="120" fill="none" stroke="#e9ecef" stroke-width="1"/>
-
-                        <!-- Axes -->
-                        <line x1="200" y1="200" x2="200" y2="80" stroke="#e9ecef" stroke-width="1"/>
-                        <line x1="200" y1="200" x2="316" y2="137" stroke="#e9ecef" stroke-width="1"/>
-                        <line x1="200" y1="200" x2="295" y2="295" stroke="#e9ecef" stroke-width="1"/>
-                        <line x1="200" y1="200" x2="105" y2="295" stroke="#e9ecef" stroke-width="1"/>
-                        <line x1="200" y1="200" x2="84" y2="137" stroke="#e9ecef" stroke-width="1"/>
-
-                        <!-- Data polygon -->
-                        <polygon id="radarPolygon" points="200,80 200,80 200,80 200,80 200,80"
-                                 fill="url(#radarGradient)" stroke="#D4AF55" stroke-width="2" opacity="0"/>
-
-                        <!-- Dimension labels -->
-                        <text x="200" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a2e">Strategy</text>
-                        <text x="330" y="145" text-anchor="start" font-size="12" font-weight="600" fill="#1a1a2e">Tools</text>
-                        <text x="310" y="320" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a2e">Content</text>
-                        <text x="90" y="320" text-anchor="middle" font-size="12" font-weight="600" fill="#1a1a2e">Governance</text>
-                        <text x="70" y="145" text-anchor="end" font-size="12" font-weight="600" fill="#1a1a2e">Skills</text>
-                    </svg>
-                </div>
+                <!-- DIMENSION RING CHARTS -->
+                <div class="rings-container" id="dimensionRings"></div>
 
                 <!-- DIMENSION CARDS (BASIC - ALWAYS VISIBLE) -->
                 <div class="dimensions-grid" id="dimensionsGrid"></div>
@@ -1304,8 +1293,8 @@
             const isLow = (score) => score < 50;
             const isCritical = (score) => score < 40;
 
-            // Pattern 1: High tools but low integration
-            if (isHigh(dimensions.tools) && isLow(dimensions.integration)) {
+            // Pattern 1: High tools but low content/workflow integration
+            if (isHigh(dimensions.tools) && isLow(dimensions.content)) {
                 insights.push({
                     title: 'Strong Tools, Weak Workflows',
                     insight: 'Your team has strong AI capabilities that aren\'t being used effectively. You have the tools. Now build the workflows.',
@@ -1542,10 +1531,10 @@
         }
 
         function getMaturityLevel(score) {
-            if (score < 20) return 'Exploring';
-            if (score < 40) return 'Developing';
-            if (score < 60) return 'Advancing';
-            if (score < 80) return 'Leading';
+            if (score <= 30) return 'Exploring';
+            if (score <= 50) return 'Developing';
+            if (score <= 65) return 'Advancing';
+            if (score <= 80) return 'Leading';
             return 'Pioneering';
         }
 
@@ -1563,7 +1552,7 @@
             showScreen('results');
             renderDimensionCards(dimensions);
             animateGauge(resultsData.overallScore);
-            animateRadar(dimensions);
+            renderDimensionRings(dimensions);
 
             // Initialize email gate visibility
             document.getElementById('emailGateSection').classList.remove('hidden');
@@ -1611,31 +1600,44 @@
             update();
         }
 
-        function animateRadar(dimensions) {
-            const categoryOrder = ['strategy', 'tools', 'skills', 'governance', 'content'];
-            const values = categoryOrder.map(id => dimensions[id]);
+        function renderDimensionRings(dimensions) {
+            const categoryOrder = ['strategy', 'tools', 'skills', 'content', 'governance'];
+            const labels = { strategy: 'Strategy', tools: 'Tools', skills: 'Skills', content: 'Content', governance: 'Governance' };
+            const container = document.getElementById('dimensionRings');
 
-            const centerX = 200;
-            const centerY = 200;
-            const maxRadius = 120;
-            const angleSlice = (Math.PI * 2) / 5;
+            const radius = 42;
+            const circumference = 2 * Math.PI * radius;
 
-            let points = [];
-            values.forEach((value, i) => {
-                const angle = angleSlice * i - Math.PI / 2;
-                const radius = (value / 100) * maxRadius;
-                const x = centerX + radius * Math.cos(angle);
-                const y = centerY + radius * Math.sin(angle);
-                points.push(`${x},${y}`);
+            let html = '';
+            categoryOrder.forEach((id, idx) => {
+                const score = dimensions[id];
+                const strokeColor = score >= 60 ? '#D4AF55' : score >= 40 ? '#92400e' : '#7f1d1d';
+                const offset = circumference - (score / 100) * circumference;
+
+                html += `
+                    <div class="ring-item">
+                        <svg class="ring-svg" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="${radius}" fill="none" stroke="#e9ecef" stroke-width="8"/>
+                            <circle cx="50" cy="50" r="${radius}" fill="none" stroke="${strokeColor}" stroke-width="8"
+                                    stroke-dasharray="${circumference}" stroke-dashoffset="${circumference}"
+                                    stroke-linecap="round" transform="rotate(-90 50 50)"
+                                    style="transition: stroke-dashoffset 1.2s ease-out ${idx * 0.15}s;"
+                                    data-target-offset="${offset}" class="ring-arc"/>
+                            <text x="50" y="50" text-anchor="middle" dominant-baseline="central" class="ring-score">${score}</text>
+                        </svg>
+                        <div class="ring-label">${labels[id]}</div>
+                    </div>
+                `;
             });
 
-            const polygon = document.getElementById('radarPolygon');
-            polygon.setAttribute('points', points.join(' '));
+            container.innerHTML = html;
 
-            setTimeout(() => {
-                polygon.style.opacity = '1';
-                polygon.style.transition = 'opacity 1s ease-out';
-            }, 100);
+            // Trigger animation after render
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.ring-arc').forEach(arc => {
+                    arc.style.strokeDashoffset = arc.dataset.targetOffset;
+                });
+            });
         }
 
         function renderDimensionCards(dimensions) {
