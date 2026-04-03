@@ -66,12 +66,21 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid dimensions data', missingDimensions });
   }
 
-  // Fire-and-forget: GHL contact creation + notification email + lead email
-  sendToGHL(payload).catch(err => console.error('GHL error:', err.message));
-  sendResendEmail(payload).catch(err => console.error('Resend notification error:', err.message));
-  sendLeadEmail(payload).catch(err => console.error('Resend lead email error:', err.message));
+  // Run all integrations in parallel, wait for all to complete before returning
+  const results = await Promise.allSettled([
+    sendToGHL(payload),
+    sendResendEmail(payload),
+    sendLeadEmail(payload)
+  ]);
 
-  // Return immediately — don't block on integrations
+  // Log any failures
+  const labels = ['GHL', 'Resend notification', 'Lead email'];
+  results.forEach((result, i) => {
+    if (result.status === 'rejected') {
+      console.error(`${labels[i]} error:`, result.reason?.message || result.reason);
+    }
+  });
+
   return res.status(200).json({ success: true });
 }
 
