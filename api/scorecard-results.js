@@ -2,8 +2,9 @@
  * Vercel Serverless API Route: Scorecard Results Handler
  *
  * Receives AI Readiness Scorecard results and:
- * 1. Creates/updates a contact in GoHighLevel via API
+ * 1. Creates/updates a contact in GoHighLevel via API (tagged for nurture workflow)
  * 2. Sends email notification to Vernon via Resend
+ * 3. Sends lead confirmation email with score summary and diagnostic CTA
  *
  * REQUIRED ENVIRONMENT VARIABLES (set in Vercel Dashboard → Project Settings → Environment Variables):
  *
@@ -19,8 +20,8 @@
  *
  * - NOTIFICATION_EMAIL: Where to send score alerts (default: vernon@vernonross.com)
  *
- * - RESEND_FROM: Sender address (default: notifications@aireadyplanner.com)
- *   Must be a verified domain in Resend, or use onboarding@resend.dev for testing
+ * - RESEND_FROM: Sender address (default: hello@aireadyplanner.com)
+ *   Must be a verified domain in Resend
  */
 
 export default async function handler(req, res) {
@@ -65,9 +66,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid dimensions data', missingDimensions });
   }
 
-  // Fire-and-forget: GHL contact creation + Resend email
+  // Fire-and-forget: GHL contact creation + notification email + lead email
   sendToGHL(payload).catch(err => console.error('GHL error:', err.message));
-  sendResendEmail(payload).catch(err => console.error('Resend error:', err.message));
+  sendResendEmail(payload).catch(err => console.error('Resend notification error:', err.message));
+  sendLeadEmail(payload).catch(err => console.error('Resend lead email error:', err.message));
 
   // Return immediately — don't block on integrations
   return res.status(200).json({ success: true });
@@ -91,7 +93,7 @@ async function sendToGHL(payload) {
     lastName: payload.lastName,
     email: payload.email,
     companyName: payload.company || '',
-    tags: ['scorecard-completed', 'ai-readiness-diagnostic'],
+    tags: ['scorecard-completed', 'ai-readiness-diagnostic', 'scorecard-nurture'],
     customFields: [
       { key: 'team_size', field_value: payload.teamSize || '' },
       { key: 'ai_readiness_score', field_value: String(payload.overallScore) },
@@ -131,7 +133,7 @@ async function sendToGHL(payload) {
 async function sendResendEmail(payload) {
   const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.NOTIFICATION_EMAIL || 'vernon@vernonross.com';
-  const fromEmail = process.env.RESEND_FROM || 'onboarding@resend.dev';
+  const fromEmail = process.env.RESEND_FROM || 'hello@aireadyplanner.com';
 
   if (!apiKey) {
     console.warn('RESEND_API_KEY not configured — logging scorecard instead:');
@@ -232,5 +234,131 @@ async function sendResendEmail(payload) {
     throw new Error(`Resend API ${response.status}: ${body}`);
   }
 
-  console.log('Resend email sent');
+  console.log('Resend notification email sent');
+}
+
+/**
+ * Send lead their score summary with diagnostic CTA
+ */
+async function sendLeadEmail(payload) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.RESEND_FROM || 'hello@aireadyplanner.com';
+
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY not configured, skipping lead email');
+    return;
+  }
+
+  const dims = payload.dimensions;
+  const score = payload.overallScore;
+  const level = payload.maturityLevel || 'Unknown';
+  const insights = payload.smartInsights && payload.smartInsights.length > 0
+    ? payload.smartInsights.map(i => `<li style="margin-bottom: 8px; color: #4a4a6a;">${i}</li>`).join('')
+    : '';
+
+  function scoreColor(s) {
+    if (s >= 60) return '#065f46';
+    if (s >= 40) return '#92400e';
+    return '#7f1d1d';
+  }
+
+  function scoreBar(s) {
+    return `<div style="background: #e9ecef; border-radius: 4px; height: 8px; width: 100%; margin-top: 4px;">
+      <div style="background: ${s >= 60 ? '#D4AF55' : s >= 40 ? '#92400e' : '#7f1d1d'}; border-radius: 4px; height: 8px; width: ${s}%;"></div>
+    </div>`;
+  }
+
+  const html = `
+    <div style="font-family: Inter, Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+      <div style="background: #0A1628; padding: 32px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="color: #D4AF55; margin: 0 0 8px 0; font-size: 24px;">Your AI Readiness Results</h1>
+        <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 14px;">AI-Ready Comms Team Scorecard</p>
+      </div>
+
+      <div style="padding: 32px; background: #f8f9fc;">
+        <p style="color: #1a1a2e; font-size: 16px; margin: 0 0 24px 0;">Hi ${payload.firstName},</p>
+        <p style="color: #4a4a6a; font-size: 15px; line-height: 1.6; margin: 0 0 24px 0;">Thanks for completing the AI Readiness Scorecard. Here's a summary of where your team stands.</p>
+
+        <div style="background: white; border-radius: 12px; padding: 32px; text-align: center; margin-bottom: 24px; border: 1px solid #e9ecef;">
+          <div style="font-size: 56px; font-weight: 900; color: #0A1628; margin-bottom: 4px;">${score}</div>
+          <div style="font-size: 13px; color: #6B7280; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">out of 100</div>
+          <div style="font-size: 18px; font-weight: 600; color: #D4AF55;">${level}</div>
+        </div>
+
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e9ecef;">
+          <h3 style="color: #0A1628; margin: 0 0 16px 0; font-size: 16px;">Dimension Scores</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; color: #1a1a2e; font-weight: 500;">Strategy</td>
+              <td style="padding: 8px 0; text-align: right; font-weight: 700; color: ${scoreColor(dims.strategy)};">${dims.strategy}</td>
+            </tr>
+            <tr><td colspan="2">${scoreBar(dims.strategy)}</td></tr>
+            <tr>
+              <td style="padding: 8px 0; color: #1a1a2e; font-weight: 500;">Tools & Technology</td>
+              <td style="padding: 8px 0; text-align: right; font-weight: 700; color: ${scoreColor(dims.tools)};">${dims.tools}</td>
+            </tr>
+            <tr><td colspan="2">${scoreBar(dims.tools)}</td></tr>
+            <tr>
+              <td style="padding: 8px 0; color: #1a1a2e; font-weight: 500;">Team Skills</td>
+              <td style="padding: 8px 0; text-align: right; font-weight: 700; color: ${scoreColor(dims.skills)};">${dims.skills}</td>
+            </tr>
+            <tr><td colspan="2">${scoreBar(dims.skills)}</td></tr>
+            <tr>
+              <td style="padding: 8px 0; color: #1a1a2e; font-weight: 500;">Content & Workflow</td>
+              <td style="padding: 8px 0; text-align: right; font-weight: 700; color: ${scoreColor(dims.content)};">${dims.content}</td>
+            </tr>
+            <tr><td colspan="2">${scoreBar(dims.content)}</td></tr>
+            <tr>
+              <td style="padding: 8px 0; color: #1a1a2e; font-weight: 500;">Governance</td>
+              <td style="padding: 8px 0; text-align: right; font-weight: 700; color: ${scoreColor(dims.governance)};">${dims.governance}</td>
+            </tr>
+            <tr><td colspan="2">${scoreBar(dims.governance)}</td></tr>
+          </table>
+        </div>
+
+        ${insights ? `
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 24px; border: 1px solid #e9ecef;">
+          <h3 style="color: #0A1628; margin: 0 0 12px 0; font-size: 16px;">Key Insights</h3>
+          <ul style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6;">
+            ${insights}
+          </ul>
+        </div>
+        ` : ''}
+
+        <div style="background: #0A1628; border-radius: 12px; padding: 32px; text-align: center; margin-bottom: 24px;">
+          <h3 style="color: white; margin: 0 0 12px 0; font-size: 18px;">Ready for the Full Picture?</h3>
+          <p style="color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">The scorecard gives you a starting point. The AI Readiness Diagnostic is a 2-hour guided session that maps your workflows, audits your technology, and delivers a concrete implementation roadmap.</p>
+          <a href="https://bookme.name/vernon/lite/ai-readiness-diagnostic-discovery-call"
+             style="display: inline-block; background: #D4AF55; color: #0A1628; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">
+            Schedule Your Diagnostic
+          </a>
+        </div>
+
+        <p style="color: #9CA3AF; font-size: 12px; text-align: center; margin: 0;">
+          This email was sent by AI-Ready Comms Team Scorecard at aireadyplanner.com
+        </p>
+      </div>
+    </div>
+  `;
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      from: `AI Readiness Scorecard <${fromEmail}>`,
+      to: [payload.email],
+      subject: `Your AI Readiness Score: ${score}/100 - ${level}`,
+      html
+    })
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Resend lead email ${response.status}: ${body}`);
+  }
+
+  console.log('Lead confirmation email sent to', payload.email);
 }
